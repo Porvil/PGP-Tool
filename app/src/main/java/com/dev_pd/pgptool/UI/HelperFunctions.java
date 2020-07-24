@@ -3,6 +3,8 @@ package com.dev_pd.pgptool.UI;
 import android.content.Context;
 import android.os.Environment;
 
+import com.dev_pd.pgptool.Constants;
+import com.dev_pd.pgptool.Cryptography.PrivateKeySerializable;
 import com.dev_pd.pgptool.Cryptography.PublicKeySerializable;
 
 import java.io.File;
@@ -67,17 +69,17 @@ public class HelperFunctions {
 //        }
     }
 
-    public static void writeFileExternalStorage(String fileName, PublicKeySerializable publicKeySerializable) throws IOException {
+    public static void writeFileExternalStorage(String fileName, String extension, Object object) throws IOException {
 
         //Checking the availability state of the External Storage.
         String state = Environment.getExternalStorageState();
         if (!Environment.MEDIA_MOUNTED.equals(state)) {
-            System.out.println("not MOUNTed -__-");
+            System.out.println("Storage is not mounted, returning!!");
             //If it isn't mounted - we can't write into it.
             return;
         }
 
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/PGP Tool";
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.DIRECTORY;
         File rootFile = new File(path);
         if(!rootFile.exists()){
             if(!rootFile.mkdir()){
@@ -87,11 +89,11 @@ public class HelperFunctions {
         }
         System.out.println(path);
 
-        FileOutputStream fileOutputStream = new FileOutputStream(path + "/" + fileName);
+        FileOutputStream fileOutputStream = new FileOutputStream(path + "/" + fileName + extension);
         ObjectOutputStream out = new ObjectOutputStream(fileOutputStream);
 
         // Method for serialization of object
-        out.writeObject(publicKeySerializable);
+        out.writeObject(object);
 
         out.close();
         fileOutputStream.close();
@@ -106,6 +108,16 @@ public class HelperFunctions {
         }
 
         return (PublicKeySerializable)readSerializedObject(path);
+    }
+
+    public static PrivateKeySerializable readPrivateKeySerializable(String path){
+        File file = new File(path);
+        if(!file.exists()){
+            System.out.println("file doesnt exist, returning null");
+            return null;
+        }
+
+        return (PrivateKeySerializable) readSerializedObject(path);
     }
 
     private static Object readSerializedObject(String path){

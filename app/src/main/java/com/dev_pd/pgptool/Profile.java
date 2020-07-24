@@ -14,8 +14,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.dev_pd.pgptool.Cryptography.PrivateKeySerializable;
 import com.dev_pd.pgptool.Cryptography.PublicKeySerializable;
 import com.dev_pd.pgptool.Cryptography.Utility;
 import com.dev_pd.*;
@@ -29,6 +31,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -91,10 +96,16 @@ public class Profile extends Fragment {
         Button btn_generateKey = view.findViewById(R.id.btn_generateKey);
         final Spinner spinner_keySize = view.findViewById(R.id.spinner_keySize);
 
+        final EditText editText = view.findViewById(R.id.editTextTextPassword);
+
         btn_generateKey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                int keySize = 1024;
+
+//                SecureRandom random = new SecureRandom();
+                byte[] salt = Utility.getRandomSalt();
+//                random.nextBytes(salt);
+
                 String keySizeString = (String)spinner_keySize.getSelectedItem();
                 int keySize = Integer.parseInt(keySizeString);
                 System.out.println(keySize);
@@ -109,11 +120,18 @@ public class Profile extends Fragment {
 
                     PublicKeySerializable publicKeySerializable = new PublicKeySerializable("pd",keySize, keyPair.getPublic());
 
-                    HelperFunctions.writeFileExternalStorage(" mykey.txt", publicKeySerializable);
+                    String s = editText.getText().toString();
+                    byte[] hash = Utility.getHash(s, salt);
+                    PrivateKeySerializable privateKeySerializable = new PrivateKeySerializable("pd",keySize, keyPair.getPrivate(),hash,salt);
+
+                    HelperFunctions.writeFileExternalStorage("test", Constants.EXTENSION_KEY, publicKeySerializable);
+                    HelperFunctions.writeFileExternalStorage("test2", Constants.EXTENSION_KEY, privateKeySerializable);
 
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InvalidKeySpecException e) {
                     e.printStackTrace();
                 }
 
@@ -142,11 +160,17 @@ public class Profile extends Fragment {
             @Override
             public void onClick(View v) {
 
+                String s = editText.getText().toString();
+                PrivateKeySerializable privateKeySerializable = HelperFunctions.readPrivateKeySerializable(gpath);
+
+                PrivateKey privateKey = privateKeySerializable.getPrivateKey(s);
+
             }
         });
 
 
     }
+    String gpath;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode,
@@ -163,7 +187,7 @@ public class Profile extends Fragment {
 
                 FileUtilsMine fileUtilsMine = new FileUtilsMine(getContext());
                 String path = fileUtilsMine.getPath(uri);
-
+gpath = path;
 
                 System.out.println(path);
 
@@ -172,14 +196,14 @@ public class Profile extends Fragment {
                 // Perform operations on the document using its URI.
 
 
-                PublicKeySerializable publicKeySerializable = HelperFunctions.readPublicKeySerializable(path);
+//                PublicKeySerializable publicKeySerializable = HelperFunctions.readPublicKeySerializable(path);
 
 //                System.out.println(publicKeySerializable.getPublicKey().);
-                try {
-                    System.out.println(Utility.getString(publicKeySerializable.getPublicKey().getEncoded()));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    System.out.println(Utility.getString(publicKeySerializable.getPublicKey().getEncoded()));
+//                } catch (UnsupportedEncodingException e) {
+//                    e.printStackTrace();
+//                }
 
             }
         }

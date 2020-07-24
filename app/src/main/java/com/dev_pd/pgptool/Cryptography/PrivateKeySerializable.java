@@ -1,5 +1,6 @@
 package com.dev_pd.pgptool.Cryptography;
 
+import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
@@ -9,7 +10,7 @@ import java.util.Arrays;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-public class PrivateKeySerializable {
+public class PrivateKeySerializable implements Serializable {
 
     private static final long serialVersionUID = 42L;
     private String owner;
@@ -58,9 +59,7 @@ public class PrivateKeySerializable {
             return false;
         }
 
-        KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
-        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-        byte[] hash = factory.generateSecret(spec).getEncoded();
+        byte[] hash = Utility.getHash(password, salt);
 
         return Arrays.equals(hash, hashPassword);
     }
