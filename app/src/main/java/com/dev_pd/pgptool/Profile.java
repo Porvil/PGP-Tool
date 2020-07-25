@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.provider.DocumentsContract;
 import android.view.LayoutInflater;
@@ -80,6 +81,8 @@ public class Profile extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        getParentFragmentManager().getFragment(savedInstanceState, "profile");
     }
 
     @Override
@@ -209,4 +212,15 @@ gpath = path;
         }
     }
 
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+//        FragmentManager.sa
+
+        getParentFragmentManager().putFragment(outState, "profile", this);
+//        getSupportFragmentManager().putFragment(outState, "myFragmentName", mMyFragment);
+
+    }
 }

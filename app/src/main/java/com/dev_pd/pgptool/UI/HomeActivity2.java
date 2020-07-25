@@ -19,7 +19,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity2 extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +29,7 @@ public class HomeActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
         NavController navController = Navigation.findNavController(this,  R.id.fragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
-
+//        bottomNavigationView.se
 
 //        Button button = findViewById(R.id.button);
 //
@@ -62,7 +62,7 @@ public class HomeActivity extends AppCompatActivity {
 //        button1.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-////                Navigation.findNavController(R.layout.activity_home);
+////                Navigation.findNavController(R.layout.activity_home2);
 //            }
 //        });
     }
