@@ -22,27 +22,46 @@ import javax.crypto.spec.PBEKeySpec;
 
 public class Utility {
     
-    static public KeyPair generateRSAKeyPair(int keySize) throws NoSuchAlgorithmException{
+    static public KeyPair generateRSAKeyPair(int keySize){
         if( !(keySize == 1024 || keySize == 2048 || keySize == 4096)){
             System.out.println("BAD KEY SIZE PROVIDED");
-            return  null;
+            return null;
         }
 
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        keyPairGenerator.initialize(keySize);
+        KeyPairGenerator keyPairGenerator = null;
+        try {
 
-        // Generate the KeyPair
-        KeyPair keyPair = keyPairGenerator.generateKeyPair();
-        
-        return keyPair;
+            keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(keySize);
+            KeyPair keyPair = keyPairGenerator.generateKeyPair();
+            return keyPair;
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            System.out.println("Exception : " + e);
+            return null;
+        }
+
     }
     
-    static public String getString(byte[] data) throws UnsupportedEncodingException{
-        return new String(data, "UTF-8");
+    static public String getString(byte[] data){
+        try {
+            return new String(data, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            System.out.println("Exception : " + e);
+            return null;
+        }
     }
     
-    static public byte[] getBytes(String data) throws UnsupportedEncodingException{
-        return data.getBytes("UTF-8");
+    static public byte[] getBytes(String data){
+        try {
+            return data.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            System.out.println("Exception : " + e);
+            return null;
+        }
     }
     
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -59,12 +78,19 @@ public class Utility {
         return null;
     }
 
-    public static byte[] getHash(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public static byte[] getHash(String password, byte[] salt){
         KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
-        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-        byte[] hash = factory.generateSecret(spec).getEncoded();
+        SecretKeyFactory factory = null;
+        try {
+            factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            byte[] hash = factory.generateSecret(spec).getEncoded();
+            return hash;
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            e.printStackTrace();
+            System.out.println("Exception : " + e);
+            return null;
+        }
 
-        return hash;
     }
 
     public static byte[] getRandomSalt(){

@@ -17,6 +17,74 @@ import java.io.ObjectOutputStream;
 import java.security.KeyPair;
 
 public class HelperFunctions {
+    public static void writeFileExternalStorage(String fileName, String extension, Object object) throws IOException {
+
+        //Checking the availability state of the External Storage.
+        String state = Environment.getExternalStorageState();
+        if (!Environment.MEDIA_MOUNTED.equals(state)) {
+            System.out.println("Storage is not mounted, returning!!");
+            //If it isn't mounted - we can't write into it.
+            return;
+        }
+
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.DIRECTORY;
+        File rootFile = new File(path);
+        if(!rootFile.exists()){
+            if(!rootFile.mkdir()){
+                System.out.println("Path/file doesn't exist");
+                return;
+            }
+        }
+        System.out.println(path);
+
+        FileOutputStream fileOutputStream = new FileOutputStream(path + "/" + fileName + extension);
+        ObjectOutputStream out = new ObjectOutputStream(fileOutputStream);
+
+        // Method for serialization of object
+        out.writeObject(object);
+
+        out.close();
+        fileOutputStream.close();
+
+    }
+
+    public static void writeFileExternalStorage(String fileName, String extension, int type, Object object) throws IOException {
+
+        //Checking the availability state of the External Storage.
+        String state = Environment.getExternalStorageState();
+        if (!Environment.MEDIA_MOUNTED.equals(state)) {
+            System.out.println("Storage is not mounted, returning!!");
+            //If it isn't mounted - we can't write into it.
+            return;
+        }
+
+        String suffix = "";
+        if(type == 1)
+            suffix = Constants.SELF_DIRECTORY;
+        else
+            suffix = Constants.OTHERS_DIRECTORY;
+
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + suffix;
+        File rootFile = new File(path);
+        if(!rootFile.exists()){
+            if(!rootFile.mkdir()){
+                System.out.println("Path/file doesn't exist");
+                return;
+            }
+        }
+        System.out.println(path);
+
+        FileOutputStream fileOutputStream = new FileOutputStream(path + "/" + fileName + extension);
+        ObjectOutputStream out = new ObjectOutputStream(fileOutputStream);
+
+        // Method for serialization of object
+        out.writeObject(object);
+
+        out.close();
+        fileOutputStream.close();
+
+    }
+
 
     public static void writeFileExternalStorage(KeyPair keyPair) throws IOException {
 
@@ -67,37 +135,6 @@ public class HelperFunctions {
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-    }
-
-    public static void writeFileExternalStorage(String fileName, String extension, Object object) throws IOException {
-
-        //Checking the availability state of the External Storage.
-        String state = Environment.getExternalStorageState();
-        if (!Environment.MEDIA_MOUNTED.equals(state)) {
-            System.out.println("Storage is not mounted, returning!!");
-            //If it isn't mounted - we can't write into it.
-            return;
-        }
-
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.DIRECTORY;
-        File rootFile = new File(path);
-        if(!rootFile.exists()){
-            if(!rootFile.mkdir()){
-                System.out.println("Path/file doesn't exist");
-                return;
-            }
-        }
-        System.out.println(path);
-
-        FileOutputStream fileOutputStream = new FileOutputStream(path + "/" + fileName + extension);
-        ObjectOutputStream out = new ObjectOutputStream(fileOutputStream);
-
-        // Method for serialization of object
-        out.writeObject(object);
-
-        out.close();
-        fileOutputStream.close();
-
     }
 
     public static PublicKeySerializable readPublicKeySerializable(String path){

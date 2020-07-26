@@ -11,7 +11,7 @@
         android:orientation="vertical">
 
         <Spinner
-            android:id="@+id/spinner_keySize"
+            android:id="@+id/spinner_keySizef"
             android:layout_width="match_parent"
             android:layout_height="75dp"
             android:entries="@array/keysize_array" />

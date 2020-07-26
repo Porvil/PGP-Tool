@@ -125,16 +125,15 @@ public class Profile extends Fragment {
 
                     String s = editText.getText().toString();
                     byte[] hash = Utility.getHash(s, salt);
+                    if(hash == null)
+                        return;
+
                     PrivateKeySerializable privateKeySerializable = new PrivateKeySerializable("pd",keySize, keyPair.getPrivate(),hash,salt);
 
-                    HelperFunctions.writeFileExternalStorage("test", Constants.EXTENSION_KEY, publicKeySerializable);
-                    HelperFunctions.writeFileExternalStorage("test2", Constants.EXTENSION_KEY, privateKeySerializable);
+                    HelperFunctions.writeFileExternalStorage("test", Constants.EXTENSION_PUBLIC_KEY, publicKeySerializable);
+                    HelperFunctions.writeFileExternalStorage("test2", Constants.EXTENSION_PRIVATE_KEY, privateKeySerializable);
 
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (InvalidKeySpecException e) {
                     e.printStackTrace();
                 }
 

@@ -43,7 +43,8 @@ public class HomeActivity extends AppCompatActivity {
         btn_addKeys.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent manageKeysIntent = new Intent(HomeActivity.this, ManageKeysActivity.class);
+                startActivity(manageKeysIntent);
             }
         });
 

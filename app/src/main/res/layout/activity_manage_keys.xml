@@ -7,12 +7,35 @@
     android:orientation="vertical"
     tools:context=".ManageKeysActivity">
 
-    <Button
+    <Spinner
+        android:id="@+id/spinner_keySize"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="Add Key"
-        android:id="@+id/btn_manageKeysAdd"/>
+        android:entries="@array/keysize_array" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:hint="Enter Owner Name"
+        android:id="@+id/et_manageKeysOwner"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:hint="Enter Key Name"
+        android:id="@+id/et_manageKeysKeyName"/>
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:hint="Enter Password"
+        android:inputType="textPassword"
+        android:id="@+id/et_manageKeysPSWD"/>
 
     <Button
         android:layout_width="match_parent"
@@ -21,11 +44,5 @@
         android:text="Create Key"
         android:id="@+id/btn_manageKeysCreate"/>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="Add Other's Public Key"
-        android:id="@+id/btn_manageKeysAddOthersKey"/>
 
 </LinearLayout>
