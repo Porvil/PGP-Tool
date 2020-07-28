@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 
 import com.dev_pd.pgptool.Constants;
+import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Cryptography.PrivateKeySerializable;
 import com.dev_pd.pgptool.Cryptography.PublicKeySerializable;
 
@@ -187,6 +188,23 @@ public class HelperFunctions {
         }
 
         return object1;
+    }
+
+    public static KeySerializable readKey(){
+        KeySerializable keySerializable = null;
+
+        System.out.println("DAMN");
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.DIRECTORY;
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+        
+        for(File curFile : files){
+            String curPath = curFile.getAbsolutePath();
+            System.out.println(curFile.getName());
+//            Object o = readSerializedObject(curPath);
+        }
+
+        return keySerializable;
     }
 
 }

@@ -13,6 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.dev_pd.pgptool.Cryptography.Utility;
+import com.dev_pd.pgptool.UI.HelperFunctions;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link MyKeysFragment#newInstance} factory method to
@@ -49,6 +52,10 @@ public class MyKeysFragment extends Fragment {
     // TODO: Rename and change types and number of parameters
     public static MyKeysFragment newInstance(String param1, String param2) {
         MyKeysFragment fragment = new MyKeysFragment();
+
+//        LoadKeysTask loadKeysTask = new LoadKeysTask(this);
+
+        HelperFunctions.readKey();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
