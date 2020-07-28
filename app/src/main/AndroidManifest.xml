@@ -12,7 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ManageKeysActivity"></activity>
+        <activity
+            android:name=".ViewKeysActivity"
+            android:label="@string/title_activity_view_keys"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".ManageKeysActivity" />
         <activity android:name=".DecryptActivity" />
         <activity android:name=".EncryptActivity" />
         <activity android:name=".HomeActivity">

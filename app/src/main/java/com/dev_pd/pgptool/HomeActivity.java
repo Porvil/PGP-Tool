@@ -51,7 +51,8 @@ public class HomeActivity extends AppCompatActivity {
         btn_viewKeys.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent viewKeysIntent = new Intent(HomeActivity.this, ViewKeysActivity.class);
+                startActivity(viewKeysIntent);
             }
         });
 
