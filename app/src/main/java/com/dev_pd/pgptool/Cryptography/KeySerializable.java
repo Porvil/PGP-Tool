@@ -1,9 +1,12 @@
 package com.dev_pd.pgptool.Cryptography;
 
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
 public class KeySerializable implements Serializable {
 
+    private static final long serialVersionUID = 40L;
     private String keyType;
     private PrivateKeySerializable privateKeySerializable;
     private PublicKeySerializable publicKeySerializable;
@@ -37,6 +40,19 @@ public class KeySerializable implements Serializable {
 
     public int getKeySize(){
         return publicKeySerializable.getKeySize();
+    }
+
+    public String getOwner(){
+        return publicKeySerializable.getOwner();
+    }
+
+    @Override
+    public String toString() {
+        return "KeySerializable{" +
+                "keyType='" + keyType + '\'' +
+                ", privateKeySerializable=" + privateKeySerializable +
+                ", publicKeySerializable=" + publicKeySerializable +
+                '}';
     }
 }
 

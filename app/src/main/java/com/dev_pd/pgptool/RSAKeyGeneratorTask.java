@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Cryptography.PrivateKeySerializable;
 import com.dev_pd.pgptool.Cryptography.PublicKeySerializable;
 import com.dev_pd.pgptool.Cryptography.Utility;
@@ -47,13 +48,21 @@ public class RSAKeyGeneratorTask extends AsyncTask<Integer, Integer, Boolean> {
         PublicKeySerializable publicKeySerializable = new PublicKeySerializable(owner, keySize, keyPair.getPublic());
         PrivateKeySerializable privateKeySerializable = new PrivateKeySerializable(owner, keySize, keyPair.getPrivate(), hash, randomSalt);
 
+        KeySerializable keySerializable = new KeySerializable("BOTH", privateKeySerializable, publicKeySerializable);
+
         try {
-            HelperFunctions.writeFileExternalStorage(keyName, Constants.EXTENSION_PUBLIC_KEY, 1, publicKeySerializable);
-            HelperFunctions.writeFileExternalStorage(keyName, Constants.EXTENSION_PRIVATE_KEY, 1, privateKeySerializable);
+            HelperFunctions.writeFileExternalStorage(keyName, Constants.EXTENSION_KEY, keySerializable);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
+//        try{
+//            HelperFunctions.writeFileExternalStorage(keyName, Constants.EXTENSION_PUBLIC_KEY, 1, publicKeySerializable);
+//            HelperFunctions.writeFileExternalStorage(keyName, Constants.EXTENSION_PRIVATE_KEY, 1, privateKeySerializable);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
 
         return true;
     }

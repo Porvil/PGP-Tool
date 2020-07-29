@@ -8,8 +8,12 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dev_pd.pgptool.Cryptography.KeySerializable;
+
+import java.util.ArrayList;
+
 class KeyAdapter extends RecyclerView.Adapter<KeyAdapter.MyViewHolder> {
-    private String[] mDataset;
+    private ArrayList<KeySerializable> keySerializables;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -24,8 +28,9 @@ class KeyAdapter extends RecyclerView.Adapter<KeyAdapter.MyViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public KeyAdapter(String[] myDataset) {
-        mDataset = myDataset;
+
+    public KeyAdapter(ArrayList<KeySerializable> keySerializables) {
+        this.keySerializables = keySerializables;
     }
 
     // Create new views (invoked by the layout manager)
@@ -55,12 +60,17 @@ class KeyAdapter extends RecyclerView.Adapter<KeyAdapter.MyViewHolder> {
         Button btn_myKeysPrivateKey = holder.view.findViewById(R.id.btn_myKeysPrivateKey);
         Button btn_myKeysPublicKey = holder.view.findViewById(R.id.btn_myKeysPublicKey);
 
-
+        KeySerializable keySerializable = keySerializables.get(position);
+        if(keySerializable != null) {
+            tv_myKeysOwner.setText(keySerializable.getOwner());
+//        tv_myKeysKeyName.setText(keySerializable.ge);
+            tv_myKeysKeySize.setText(keySerializable.getKeySize()+"");
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mDataset.length;
+        return keySerializables.size();
     }
 }

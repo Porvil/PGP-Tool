@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.KeyPair;
+import java.util.ArrayList;
 
 public class HelperFunctions {
     public static void writeFileExternalStorage(String fileName, String extension, Object object) throws IOException {
@@ -28,7 +29,7 @@ public class HelperFunctions {
             return;
         }
 
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.DIRECTORY;
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.SELF_DIRECTORY;
         File rootFile = new File(path);
         if(!rootFile.exists()){
             if(!rootFile.mkdir()){
@@ -180,6 +181,7 @@ public class HelperFunctions {
         catch(IOException ex)
         {
             System.out.println("IOException is caught");
+            System.out.println(ex.getMessage());
         }
 
         catch(ClassNotFoundException ex)
@@ -190,21 +192,60 @@ public class HelperFunctions {
         return object1;
     }
 
-    public static KeySerializable readKey(){
-        KeySerializable keySerializable = null;
+    public static KeySerializable readKey(String path){
+
+        KeySerializable object = (KeySerializable) readSerializedObject(path);
+        if(object == null)
+            return null;
+
+        return object;
+
+//        try {
+//            KeySerializable keySerializable = (KeySerializable) object;
+//            return keySerializable;
+//        }
+//        catch (ClassCastException e){
+//            System.out.println("Exception = " + e);
+//            return null;
+//        }
+
+    }
+
+    public static ArrayList<KeySerializable> readKeys(){
+        ArrayList<KeySerializable> keySerializables = new ArrayList<>();
 
         System.out.println("DAMN");
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.DIRECTORY;
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.SELF_DIRECTORY;
         File directory = new File(path);
         File[] files = directory.listFiles();
         
         for(File curFile : files){
             String curPath = curFile.getAbsolutePath();
             System.out.println(curFile.getName());
+            String name = curFile.getName();
+            if(isValidKeyFile(name)){
+                KeySerializable keySerializable = readKey(curPath);
+                System.out.println(keySerializable);
+                keySerializables.add(keySerializable);
+                System.out.println(keySerializable!=null);
+            }
+            else{
+                System.out.println("shit : " + name);
+            }
+
 //            Object o = readSerializedObject(curPath);
         }
 
-        return keySerializable;
+        System.out.println("in hlperfunctions :" + keySerializables.size());
+        return keySerializables;
+    }
+
+    public static boolean isValidKeyFile(String name){
+        if(name.lastIndexOf(".") != -1 && name.lastIndexOf(".") != 0)
+            if (name.substring(name.lastIndexOf(".")).equals(Constants.EXTENSION_KEY))
+                return true;
+
+        return false;
     }
 
 }

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Cryptography.PrivateKeySerializable;
 import com.dev_pd.pgptool.Cryptography.PublicKeySerializable;
 import com.dev_pd.pgptool.Cryptography.Utility;
@@ -13,49 +14,22 @@ import com.dev_pd.pgptool.UI.HelperFunctions;
 
 import java.io.IOException;
 import java.security.KeyPair;
+import java.util.ArrayList;
 
 public class LoadKeysTask extends AsyncTask<Integer, Integer, Boolean> {
 
     Context context;
     ProgressDialog progressDialog;
-    int keySize;
-    String owner;
-    String keyName;
-    String password;
-    Activity activity;
+    ArrayList<KeySerializable> keySerializables;
 
-    public LoadKeysTask(Activity activity) {
+    public LoadKeysTask(Context context, ArrayList<KeySerializable> keySerializables) {
         this.context = context;
-        this.keySize = keySize;
-        this.owner = owner;
-        this.keyName = keyName;
-        this.password = password;
-        this.activity = activity;
+        this.keySerializables = keySerializables;
     }
 
     @Override
     protected Boolean doInBackground(Integer... integers) {
-
-        KeyPair keyPair = Utility.generateRSAKeyPair(keySize);
-        if(keyPair == null)
-            return false;
-
-        byte[] randomSalt = Utility.getRandomSalt();
-        byte[] hash = Utility.getHash(password, randomSalt);
-        if(hash == null)
-            return false;
-
-        PublicKeySerializable publicKeySerializable = new PublicKeySerializable(owner, keySize, keyPair.getPublic());
-        PrivateKeySerializable privateKeySerializable = new PrivateKeySerializable(owner, keySize, keyPair.getPrivate(), hash, randomSalt);
-
-        try {
-            HelperFunctions.writeFileExternalStorage(keyName, Constants.EXTENSION_PUBLIC_KEY, 1, publicKeySerializable);
-            HelperFunctions.writeFileExternalStorage(keyName, Constants.EXTENSION_PRIVATE_KEY, 1, privateKeySerializable);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-
+        keySerializables = HelperFunctions.readKeys();
         return true;
     }
 

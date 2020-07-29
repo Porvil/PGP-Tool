@@ -8,9 +8,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.MyKeysFragment;
 import com.dev_pd.pgptool.OtherKeysFragment;
 import com.dev_pd.pgptool.R;
+
+import java.util.ArrayList;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
@@ -21,11 +24,15 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @StringRes
     private static final int[] TAB_TITLES = new int[]{R.string.myKeys, R.string.othersKeys};
     private final Context mContext;
+    private ArrayList<KeySerializable> myKeys;
 
-    public SectionsPagerAdapter(Context context, FragmentManager fm) {
+    public SectionsPagerAdapter(Context context, FragmentManager fm, ArrayList<KeySerializable> myKeys) {
         super(fm);
         mContext = context;
+        this.myKeys = myKeys;
     }
+
+
 
     @Override
     public Fragment getItem(int position) {
@@ -34,7 +41,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 //        return PlaceholderFragment.newInstance(position + 1);
 
         switch (position){
-            case 0: return MyKeysFragment.newInstance("","");
+            case 0:
+                System.out.println("on getitem :" + myKeys.size());
+                return MyKeysFragment.newInstance(mContext, myKeys,"","");
             case 1: return OtherKeysFragment.newInstance("","");
         }
 

@@ -1,6 +1,8 @@
 package com.dev_pd.pgptool;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,9 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Cryptography.Utility;
 import com.dev_pd.pgptool.UI.HelperFunctions;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,6 +42,7 @@ public class MyKeysFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    ArrayList<KeySerializable> keySerializables;
 
     public MyKeysFragment() {
         // Required empty public constructor
@@ -50,13 +57,20 @@ public class MyKeysFragment extends Fragment {
      * @return A new instance of fragment MyKeysFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MyKeysFragment newInstance(String param1, String param2) {
+    public static MyKeysFragment newInstance(Context context, ArrayList<KeySerializable> keys, String param1, String param2) {
         MyKeysFragment fragment = new MyKeysFragment();
 
-//        LoadKeysTask loadKeysTask = new LoadKeysTask(this);
+        System.out.println("on new instance :" + keys.size());
 
-        HelperFunctions.readKey();
+
+//        ArrayList<KeySerializable> keySerializables = new ArrayList<>();
+//        LoadMyKeysTask loadMyKeysTask = new LoadMyKeysTask(context);
+//        for (KeySerializable keySerializable: keySerializables) {
+//            System.out.println(keySerializable.toString());
+//        }
         Bundle args = new Bundle();
+        args.putSerializable("key", keys);
+//        args.putParcelableArrayList("key", keySerializables);
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
@@ -69,7 +83,19 @@ public class MyKeysFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+            keySerializables = (ArrayList<KeySerializable>) getArguments().getSerializable("key");
+
+            System.out.println("on create keysfragment :" + keySerializables.size());
+
         }
+
+//        keySerializables = new ArrayList<>();
+//        LoadMyKeysTask loadMyKeysTask = new LoadMyKeysTask(getContext());
+//        loadMyKeysTask.execute();
+//        for (KeySerializable keySerializable: keySerializables) {
+//            System.out.println(keySerializable.toString());
+//        }
+
     }
 
     @Override
@@ -94,9 +120,47 @@ public class MyKeysFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new KeyAdapter(new String[]{"1","2"});
+        mAdapter = new KeyAdapter(keySerializables);
         recyclerView.setAdapter(mAdapter);
 
 
+    }
+
+    class LoadMyKeysTask extends AsyncTask<Void, Integer, Void>{
+    
+            Context context;
+            ProgressDialog progressDialog;
+    
+            public LoadMyKeysTask(Context context) {
+                this.context = context;
+    //            this.keySerializables = keySerializables;
+            }
+    
+            @Override
+            protected Void doInBackground(Void... integers) {
+                
+                keySerializables = HelperFunctions.readKeys();
+    //            return true;
+                return null;
+            }
+    
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = ProgressDialog.show(context, "","Generating Key. Please wait...", true);
+            }
+    
+            @Override
+            protected void onPostExecute(Void v) {
+    //            super.onPostExecute(res);
+                progressDialog.cancel();
+    //            if(!res)
+    //                Toast.makeText(context, ":(", Toast.LENGTH_SHORT).show();
+    
+    //        activity
+    
+            }
+    
+        
     }
 }
