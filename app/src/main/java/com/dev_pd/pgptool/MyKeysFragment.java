@@ -1,9 +1,12 @@
 package com.dev_pd.pgptool;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,14 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.os.Environment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
-import com.dev_pd.pgptool.Cryptography.Utility;
 import com.dev_pd.pgptool.UI.HelperFunctions;
 
 import java.io.File;
@@ -34,33 +30,25 @@ public class MyKeysFragment extends Fragment implements SwipeRefreshLayout.OnRef
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private ArrayList<KeySerializable> keySerializables;
+    private ArrayList<String> keysPath;
 
     public MyKeysFragment() {
-        // Required empty public constructor
+
     }
 
-    public static MyKeysFragment newInstance(Context context) {
+    public static MyKeysFragment newInstance() {
         MyKeysFragment fragment = new MyKeysFragment();
-
-//        Bundle args = new Bundle();
-//        args.putSerializable("key", keys);
-//        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-//            keySerializables = (ArrayList<KeySerializable>) getArguments().getSerializable("key");
-        }
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_my_keys, container, false);
     }
 
@@ -69,6 +57,7 @@ public class MyKeysFragment extends Fragment implements SwipeRefreshLayout.OnRef
         super.onViewCreated(view, savedInstanceState);
 
         keySerializables = new ArrayList<>();
+        keysPath = new ArrayList<>();
         context = getContext();
         recyclerView = view.findViewById(R.id.rv_myKeys);
 
@@ -84,7 +73,7 @@ public class MyKeysFragment extends Fragment implements SwipeRefreshLayout.OnRef
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new MyKeysAdapter(keySerializables);
+        mAdapter = new MyKeysAdapter(context, keySerializables, keysPath);
         recyclerView.setAdapter(mAdapter);
 
         LoadMyKeysTask loadMyKeysTask = new LoadMyKeysTask(context);
@@ -114,6 +103,7 @@ public class MyKeysFragment extends Fragment implements SwipeRefreshLayout.OnRef
             File directory = new File(path);
             File[] files = directory.listFiles();
 
+            keysPath.clear();
             keySerializables.clear();
             if(files != null && files.length > 0) {
                 for (File curFile : files) {
@@ -123,8 +113,13 @@ public class MyKeysFragment extends Fragment implements SwipeRefreshLayout.OnRef
                     if (HelperFunctions.isValidKeyFile(name)) {
                         KeySerializable keySerializable = HelperFunctions.readKey(curPath);
                         System.out.println(keySerializable);
-                        if (!keySerializables.contains(keySerializable))
-                            keySerializables.add(keySerializable);
+                        if (!keySerializables.contains(keySerializable)) {
+                            String keyNameInsideFile = keySerializable.getKeyName() + Constants.EXTENSION_KEY;
+                            if (keyNameInsideFile.equals(curFile.getName())) {
+                                keySerializables.add(keySerializable);
+                                keysPath.add(curPath);
+                            }
+                        }
                         System.out.println(keySerializable != null);
                     } else {
                         System.out.println("shit : " + name);

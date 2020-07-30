@@ -15,6 +15,7 @@ import java.util.ArrayList;
 class OthersKeyAdapter extends RecyclerView.Adapter<OthersKeyAdapter.MyViewHolder> {
 
     private ArrayList<KeySerializable> keySerializables;
+    private ArrayList<String> keysPath;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -25,11 +26,11 @@ class OthersKeyAdapter extends RecyclerView.Adapter<OthersKeyAdapter.MyViewHolde
         }
     }
 
-    public OthersKeyAdapter(ArrayList<KeySerializable> keySerializables) {
+    public OthersKeyAdapter(ArrayList<KeySerializable> keySerializables, ArrayList<String> keysPath) {
         this.keySerializables = keySerializables;
+        this.keysPath = keysPath;
     }
 
-    // Create new views (invoked by the layout manager)
     @Override
     public OthersKeyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
                                                             int viewType) {
@@ -54,19 +55,15 @@ class OthersKeyAdapter extends RecyclerView.Adapter<OthersKeyAdapter.MyViewHolde
         KeySerializable keySerializable = keySerializables.get(position);
         if(keySerializable != null) {
             tv_myKeysOwner.setText(keySerializable.getOwner());
-//        tv_myKeysKeyName.setText(keySerializable.ge);
+            tv_myKeysKeyName.setText(keySerializable.getKeyName());
             tv_myKeysKeySize.setText(keySerializable.getKeySize()+"");
         }
 
         btn_myKeysPublicKey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-//                sharingIntent.setType("text/plain");
-//                String shareBody = "Here is the share content body";
-//                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
-//                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-//                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+
+
 
             }
         });

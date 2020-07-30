@@ -112,7 +112,7 @@ public class Profile extends Fragment {
                 String keySizeString = (String)spinner_keySize.getSelectedItem();
                 int keySize = Integer.parseInt(keySizeString);
                 System.out.println(keySize);
-                try {
+
                     KeyPair keyPair = Utility.generateRSAKeyPair(keySize);
                     System.out.println(keyPair.getPrivate());
                     System.out.println(keyPair.getPublic());
@@ -130,12 +130,9 @@ public class Profile extends Fragment {
 
                     PrivateKeySerializable privateKeySerializable = new PrivateKeySerializable("pd",keySize, keyPair.getPrivate(),hash,salt);
 
-                    HelperFunctions.writeFileExternalStorage("test", Constants.EXTENSION_PUBLIC_KEY, publicKeySerializable);
-                    HelperFunctions.writeFileExternalStorage("test2", Constants.EXTENSION_PRIVATE_KEY, privateKeySerializable);
+                boolean test = HelperFunctions.writeFileExternalStorage("test", Constants.EXTENSION_PUBLIC_KEY, publicKeySerializable);
+                boolean test2 = HelperFunctions.writeFileExternalStorage("test2", Constants.EXTENSION_PRIVATE_KEY, privateKeySerializable);
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
 
             }
         });

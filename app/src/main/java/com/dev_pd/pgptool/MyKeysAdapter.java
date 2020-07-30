@@ -1,24 +1,31 @@
 package com.dev_pd.pgptool;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
+import com.dev_pd.pgptool.UI.HelperFunctions;
 
+import java.io.File;
 import java.util.ArrayList;
 
 class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
 
+    Context context;
     private ArrayList<KeySerializable> keySerializables;
+    private ArrayList<String> keysPath;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
+
         public View view;
         public MyViewHolder(View v) {
             super(v);
@@ -26,7 +33,9 @@ class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
         }
     }
 
-    public MyKeysAdapter(ArrayList<KeySerializable> keySerializables) {
+    public MyKeysAdapter(Context context, ArrayList<KeySerializable> keySerializables, ArrayList<String> keysPath) {
+        this.context = context;
+        this.keysPath = keysPath;
         this.keySerializables = keySerializables;
     }
 
@@ -51,22 +60,44 @@ class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
         Button btn_myKeysPrivateKey = holder.view.findViewById(R.id.btn_myKeysPrivateKey);
         Button btn_myKeysPublicKey = holder.view.findViewById(R.id.btn_myKeysPublicKey);
 
-        KeySerializable keySerializable = keySerializables.get(position);
+        final KeySerializable keySerializable = keySerializables.get(position);
         if(keySerializable != null) {
             tv_myKeysOwner.setText(keySerializable.getOwner());
-//        tv_myKeysKeyName.setText(keySerializable.ge);
+            tv_myKeysKeyName.setText(keySerializable.getKeyName());
             tv_myKeysKeySize.setText(keySerializable.getKeySize()+"");
         }
+
 
         btn_myKeysPublicKey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-//                sharingIntent.setType("text/plain");
-//                String shareBody = "Here is the share content body";
-//                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
-//                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-//                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+
+                KeySerializable publicKey = keySerializable.getShareableKey();
+
+                String tempPath = HelperFunctions.getPGPDirectoryPath() +
+                        Constants.TEMP_DIRECTORY +
+                        "/" +
+                        keySerializable.getKeyName() +
+                        Constants.EXTENSION_KEY;
+
+                HelperFunctions.writeTempFileExternalStorage(tempPath, publicKey);
+
+                final File file = new File(tempPath);
+                System.out.println(file.getAbsolutePath());
+
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                Uri uri = FileProvider.getUriForFile(context, Constants.AUTHORITY, file);
+                intent.setDataAndType(uri, "*/*");
+                intent.putExtra(Intent.EXTRA_STREAM, uri);
+
+                context.startActivity(Intent.createChooser(intent, "Sending key..."));
+            }
+        });
+
+        btn_myKeysPrivateKey.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
             }
         });

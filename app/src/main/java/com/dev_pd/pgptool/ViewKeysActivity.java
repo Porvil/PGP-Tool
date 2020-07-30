@@ -1,19 +1,16 @@
 package com.dev_pd.pgptool;
 
 import android.os.Bundle;
+import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
-import com.dev_pd.pgptool.UI.HelperFunctions;
+import com.dev_pd.pgptool.UI.SectionsPagerAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
-
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.view.View;
-
-import com.dev_pd.pgptool.UI.SectionsPagerAdapter;
 
 import java.util.ArrayList;
 
@@ -48,6 +45,5 @@ public class ViewKeysActivity extends AppCompatActivity {
         });
 
     }
-
 
 }

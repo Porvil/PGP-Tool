@@ -11,10 +11,7 @@ import com.dev_pd.pgptool.Cryptography.PublicKeySerializable;
 import com.dev_pd.pgptool.Cryptography.Utility;
 import com.dev_pd.pgptool.UI.HelperFunctions;
 
-import java.io.IOException;
 import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
 public class RSAKeyGeneratorTask extends AsyncTask<Integer, Integer, Boolean> {
 
@@ -48,23 +45,11 @@ public class RSAKeyGeneratorTask extends AsyncTask<Integer, Integer, Boolean> {
         PublicKeySerializable publicKeySerializable = new PublicKeySerializable(owner, keySize, keyPair.getPublic());
         PrivateKeySerializable privateKeySerializable = new PrivateKeySerializable(owner, keySize, keyPair.getPrivate(), hash, randomSalt);
 
-        KeySerializable keySerializable = new KeySerializable(keyName,"BOTH", privateKeySerializable, publicKeySerializable);
+        KeySerializable keySerializable = new KeySerializable(keyName,Constants.BOTHKEY, privateKeySerializable, publicKeySerializable);
 
-        try {
-            HelperFunctions.writeFileExternalStorage(keyName, Constants.EXTENSION_KEY, keySerializable);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-//        try{
-//            HelperFunctions.writeFileExternalStorage(keyName, Constants.EXTENSION_PUBLIC_KEY, 1, publicKeySerializable);
-//            HelperFunctions.writeFileExternalStorage(keyName, Constants.EXTENSION_PRIVATE_KEY, 1, privateKeySerializable);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return false;
-//        }
+        boolean ret = HelperFunctions.writeFileExternalStorage(keyName, Constants.EXTENSION_KEY, keySerializable);
 
-        return true;
+        return ret;
     }
 
     @Override
@@ -79,6 +64,8 @@ public class RSAKeyGeneratorTask extends AsyncTask<Integer, Integer, Boolean> {
         progressDialog.cancel();
         if(!res)
             Toast.makeText(context, ":(", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(context, "Key Created Successfully", Toast.LENGTH_SHORT).show();
     }
 
     @Override

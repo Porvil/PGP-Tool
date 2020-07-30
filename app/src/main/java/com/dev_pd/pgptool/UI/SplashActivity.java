@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
 
+import com.dev_pd.pgptool.Constants;
 import com.dev_pd.pgptool.R;
 
 public class SplashActivity extends AppCompatActivity {
@@ -19,7 +20,7 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         Handler handler = new Handler();
-        int SPLASH_TIME = 500;
+        int SPLASH_TIME = Constants.SPLASH_TIME;
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {

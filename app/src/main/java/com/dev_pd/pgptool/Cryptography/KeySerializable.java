@@ -1,6 +1,6 @@
 package com.dev_pd.pgptool.Cryptography;
 
-import android.os.Parcelable;
+import com.dev_pd.pgptool.Constants;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -51,7 +51,7 @@ public class KeySerializable implements Serializable {
     }
 
     public PrivateKeySerializable getPrivateKeySerializable() {
-         return keyType.equals("BOTH") ? privateKeySerializable : null;
+         return keyType.equals(Constants.BOTHKEY) ? privateKeySerializable : null;
     }
 
     public PublicKeySerializable getPublicKeySerializable() {
@@ -79,6 +79,11 @@ public class KeySerializable implements Serializable {
     public String getKeyName() {
         return keyName;
     }
+
+    public KeySerializable getShareableKey(){
+        return new KeySerializable(keyName, Constants.PUBLICKEY, publicKeySerializable);
+    }
+
 }
 
 

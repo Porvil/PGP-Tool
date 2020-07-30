@@ -3,6 +3,10 @@ package com.dev_pd.pgptool;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,11 +14,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import android.os.Environment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.UI.HelperFunctions;
@@ -31,9 +30,10 @@ public class OtherKeysFragment extends Fragment implements SwipeRefreshLayout.On
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private ArrayList<KeySerializable> keySerializables;
+    private ArrayList<String> keysPath;
 
     public OtherKeysFragment() {
-        // Required empty public constructor
+
     }
 
     public static OtherKeysFragment newInstance() {
@@ -49,7 +49,6 @@ public class OtherKeysFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_other_keys, container, false);
     }
 
@@ -58,6 +57,7 @@ public class OtherKeysFragment extends Fragment implements SwipeRefreshLayout.On
         super.onViewCreated(view, savedInstanceState);
         context = getContext();
         keySerializables = new ArrayList<>();
+        keysPath = new ArrayList<>();
         recyclerView = view.findViewById(R.id.rv_othersKeys);
         swipeRefreshLayout = view.findViewById(R.id.srl_othersKeys);
         swipeRefreshLayout.setOnRefreshListener(OtherKeysFragment.this);
@@ -71,7 +71,7 @@ public class OtherKeysFragment extends Fragment implements SwipeRefreshLayout.On
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new OthersKeyAdapter(keySerializables);
+        mAdapter = new OthersKeyAdapter(keySerializables, keysPath);
         recyclerView.setAdapter(mAdapter);
 
         LoadOthersKeysTask loadOthersKeysTask = new LoadOthersKeysTask(context);
@@ -100,6 +100,7 @@ public class OtherKeysFragment extends Fragment implements SwipeRefreshLayout.On
             File directory = new File(path);
             File[] files = directory.listFiles();
 
+            keysPath.clear();
             keySerializables.clear();
             if(files != null && files.length > 0) {
                 for (File curFile : files) {
@@ -109,8 +110,13 @@ public class OtherKeysFragment extends Fragment implements SwipeRefreshLayout.On
                     if (HelperFunctions.isValidKeyFile(name)) {
                         KeySerializable keySerializable = HelperFunctions.readKey(curPath);
                         System.out.println(keySerializable);
-                        if (!keySerializables.contains(keySerializable))
-                            keySerializables.add(keySerializable);
+                        if (!keySerializables.contains(keySerializable)) {
+                            String keyNameInsideFile = keySerializable.getKeyName() + Constants.EXTENSION_KEY;
+                            if(keyNameInsideFile.equals(curFile.getName())) {
+                                keySerializables.add(keySerializable);
+                                keysPath.add(curPath);
+                            }
+                        }
                         System.out.println(keySerializable != null);
                     } else {
                         System.out.println("shit : " + name);
