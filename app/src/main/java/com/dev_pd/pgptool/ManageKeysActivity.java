@@ -21,9 +21,7 @@ public class ManageKeysActivity extends AppCompatActivity {
     private EditText et_manageKeysKeyName;
     private EditText et_manageKeysPSWD;
 
-//    private Button btn_manageKeysAdd;
     private Button btn_manageKeysCreate;
-//    private Button btn_manageKeysAddOthersKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +40,6 @@ public class ManageKeysActivity extends AppCompatActivity {
         btn_manageKeysCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                ProgressBar progressBar = new ProgressBar(ManageKeysActivity.this);
-//                progressBar.setIndeterminate(true);
 
                 int keySize = Integer.parseInt((String)spinner_keySize.getSelectedItem());
                 String owner = et_manageKeysOwner.getText().toString().trim();

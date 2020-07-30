@@ -24,12 +24,10 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @StringRes
     private static final int[] TAB_TITLES = new int[]{R.string.myKeys, R.string.othersKeys};
     private final Context mContext;
-    private ArrayList<KeySerializable> myKeys;
 
-    public SectionsPagerAdapter(Context context, FragmentManager fm, ArrayList<KeySerializable> myKeys) {
+    public SectionsPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
-        this.myKeys = myKeys;
     }
 
 
@@ -42,9 +40,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         switch (position){
             case 0:
-                System.out.println("on getitem :" + myKeys.size());
-                return MyKeysFragment.newInstance(mContext, myKeys,"","");
-            case 1: return OtherKeysFragment.newInstance("","");
+//                System.out.println("on getitem :" + myKeys.size());
+                return MyKeysFragment.newInstance(mContext);
+            case 1: return OtherKeysFragment.newInstance();
         }
 
         return null;

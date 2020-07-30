@@ -5,10 +5,17 @@
     android:layout_height="match_parent"
     tools:context=".OtherKeysFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/srl_othersKeys">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_othersKeys"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
 </FrameLayout>

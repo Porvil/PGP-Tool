@@ -48,7 +48,7 @@ public class RSAKeyGeneratorTask extends AsyncTask<Integer, Integer, Boolean> {
         PublicKeySerializable publicKeySerializable = new PublicKeySerializable(owner, keySize, keyPair.getPublic());
         PrivateKeySerializable privateKeySerializable = new PrivateKeySerializable(owner, keySize, keyPair.getPrivate(), hash, randomSalt);
 
-        KeySerializable keySerializable = new KeySerializable("BOTH", privateKeySerializable, publicKeySerializable);
+        KeySerializable keySerializable = new KeySerializable(keyName,"BOTH", privateKeySerializable, publicKeySerializable);
 
         try {
             HelperFunctions.writeFileExternalStorage(keyName, Constants.EXTENSION_KEY, keySerializable);

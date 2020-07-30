@@ -10,7 +10,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,60 +22,29 @@ import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Cryptography.Utility;
 import com.dev_pd.pgptool.UI.HelperFunctions;
 
+import java.io.File;
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MyKeysFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class MyKeysFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class MyKeysFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private Context context;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    ArrayList<KeySerializable> keySerializables;
+    private ArrayList<KeySerializable> keySerializables;
 
     public MyKeysFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MyKeysFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MyKeysFragment newInstance(Context context, ArrayList<KeySerializable> keys, String param1, String param2) {
+    public static MyKeysFragment newInstance(Context context) {
         MyKeysFragment fragment = new MyKeysFragment();
 
-        System.out.println("on new instance :" + keys.size());
-
-
-//        ArrayList<KeySerializable> keySerializables = new ArrayList<>();
-//        LoadMyKeysTask loadMyKeysTask = new LoadMyKeysTask(context);
-//        for (KeySerializable keySerializable: keySerializables) {
-//            System.out.println(keySerializable.toString());
-//        }
-        Bundle args = new Bundle();
-        args.putSerializable("key", keys);
-//        args.putParcelableArrayList("key", keySerializables);
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+//        Bundle args = new Bundle();
+//        args.putSerializable("key", keys);
+//        fragment.setArguments(args);
         return fragment;
     }
 
@@ -81,20 +52,8 @@ public class MyKeysFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-            keySerializables = (ArrayList<KeySerializable>) getArguments().getSerializable("key");
-
-            System.out.println("on create keysfragment :" + keySerializables.size());
-
+//            keySerializables = (ArrayList<KeySerializable>) getArguments().getSerializable("key");
         }
-
-//        keySerializables = new ArrayList<>();
-//        LoadMyKeysTask loadMyKeysTask = new LoadMyKeysTask(getContext());
-//        loadMyKeysTask.execute();
-//        for (KeySerializable keySerializable: keySerializables) {
-//            System.out.println(keySerializable.toString());
-//        }
 
     }
 
@@ -109,7 +68,12 @@ public class MyKeysFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        keySerializables = new ArrayList<>();
+        context = getContext();
         recyclerView = view.findViewById(R.id.rv_myKeys);
+
+        swipeRefreshLayout = view.findViewById(R.id.srl_myKeys);
+        swipeRefreshLayout.setOnRefreshListener(MyKeysFragment.this);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -120,47 +84,69 @@ public class MyKeysFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new KeyAdapter(keySerializables);
+        mAdapter = new MyKeysAdapter(keySerializables);
         recyclerView.setAdapter(mAdapter);
 
+        LoadMyKeysTask loadMyKeysTask = new LoadMyKeysTask(context);
+        loadMyKeysTask.execute();
 
     }
 
-    class LoadMyKeysTask extends AsyncTask<Void, Integer, Void>{
-    
-            Context context;
-            ProgressDialog progressDialog;
-    
-            public LoadMyKeysTask(Context context) {
-                this.context = context;
-    //            this.keySerializables = keySerializables;
+    @Override
+    public void onRefresh() {
+        LoadMyKeysTask loadMyKeysTask = new LoadMyKeysTask(context);
+        loadMyKeysTask.execute();
+    }
+
+    class LoadMyKeysTask extends AsyncTask<Void, Integer, Void> {
+
+        Context context;
+
+        public LoadMyKeysTask(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected Void doInBackground(Void... integers) {
+
+            System.out.println("----------------------------------------------------------");
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.SELF_DIRECTORY;
+            File directory = new File(path);
+            File[] files = directory.listFiles();
+
+            keySerializables.clear();
+            if(files != null && files.length > 0) {
+                for (File curFile : files) {
+                    String curPath = curFile.getAbsolutePath();
+                    System.out.println(curFile.getName());
+                    String name = curFile.getName();
+                    if (HelperFunctions.isValidKeyFile(name)) {
+                        KeySerializable keySerializable = HelperFunctions.readKey(curPath);
+                        System.out.println(keySerializable);
+                        if (!keySerializables.contains(keySerializable))
+                            keySerializables.add(keySerializable);
+                        System.out.println(keySerializable != null);
+                    } else {
+                        System.out.println("shit : " + name);
+                    }
+
+                }
             }
-    
-            @Override
-            protected Void doInBackground(Void... integers) {
-                
-                keySerializables = HelperFunctions.readKeys();
-    //            return true;
-                return null;
-            }
-    
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progressDialog = ProgressDialog.show(context, "","Generating Key. Please wait...", true);
-            }
-    
-            @Override
-            protected void onPostExecute(Void v) {
-    //            super.onPostExecute(res);
-                progressDialog.cancel();
-    //            if(!res)
-    //                Toast.makeText(context, ":(", Toast.LENGTH_SHORT).show();
-    
-    //        activity
-    
-            }
-    
-        
+
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            super.onPostExecute(v);
+            mAdapter.notifyDataSetChanged();
+            swipeRefreshLayout.setRefreshing(false);
+        }
+
     }
 }

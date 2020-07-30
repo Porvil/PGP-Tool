@@ -5,8 +5,16 @@
     android:layout_height="match_parent"
     tools:context=".MyKeysFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_myKeys"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/srl_myKeys"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_myKeys"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 </FrameLayout>

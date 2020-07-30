@@ -1,5 +1,6 @@
 package com.dev_pd.pgptool;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +13,10 @@ import com.dev_pd.pgptool.Cryptography.KeySerializable;
 
 import java.util.ArrayList;
 
-class KeyAdapter extends RecyclerView.Adapter<KeyAdapter.MyViewHolder> {
+class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
+
     private ArrayList<KeySerializable> keySerializables;
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public View view;
@@ -27,15 +26,12 @@ class KeyAdapter extends RecyclerView.Adapter<KeyAdapter.MyViewHolder> {
         }
     }
 
-    // Provide a suitable constructor (depends on the kind of dataset)
-
-    public KeyAdapter(ArrayList<KeySerializable> keySerializables) {
+    public MyKeysAdapter(ArrayList<KeySerializable> keySerializables) {
         this.keySerializables = keySerializables;
     }
 
-    // Create new views (invoked by the layout manager)
     @Override
-    public KeyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
+    public MyKeysAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
                                                       int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
@@ -45,13 +41,8 @@ class KeyAdapter extends RecyclerView.Adapter<KeyAdapter.MyViewHolder> {
         return vh;
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-//        TextView viewById = holder.textView.findViewById(R.id.textView);
-//        viewById.setText("pos = " + position+1);
 
         TextView tv_myKeysOwner = holder.view.findViewById(R.id.tv_myKeysOwner);
         TextView tv_myKeysKeyName = holder.view.findViewById(R.id.tv_myKeysKeyName);
@@ -66,9 +57,21 @@ class KeyAdapter extends RecyclerView.Adapter<KeyAdapter.MyViewHolder> {
 //        tv_myKeysKeyName.setText(keySerializable.ge);
             tv_myKeysKeySize.setText(keySerializable.getKeySize()+"");
         }
+
+        btn_myKeysPublicKey.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+//                sharingIntent.setType("text/plain");
+//                String shareBody = "Here is the share content body";
+//                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
+//                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+//                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+
+            }
+        });
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return keySerializables.size();

@@ -6,6 +6,7 @@ import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Arrays;
+import java.util.Objects;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -21,6 +22,26 @@ public class PrivateKeySerializable implements Serializable {
 
     public PrivateKeySerializable(){
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PrivateKeySerializable that = (PrivateKeySerializable) o;
+        return keySize == that.keySize &&
+                owner.equals(that.owner) &&
+                privateKey.equals(that.privateKey) &&
+                Arrays.equals(hashPassword, that.hashPassword) &&
+                Arrays.equals(salt, that.salt);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(owner, keySize, privateKey);
+        result = 31 * result + Arrays.hashCode(hashPassword);
+        result = 31 * result + Arrays.hashCode(salt);
+        return result;
     }
 
     public PrivateKeySerializable(String owner, int keySize, PrivateKey privateKey, byte[] hashPassword, byte[] salt) {

@@ -2,6 +2,7 @@ package com.dev_pd.pgptool.Cryptography;
 
 import java.io.Serializable;
 import java.security.PublicKey;
+import java.util.Objects;
 
 public class PublicKeySerializable implements Serializable {
 
@@ -18,6 +19,21 @@ public class PublicKeySerializable implements Serializable {
 
     public PublicKeySerializable(){
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PublicKeySerializable that = (PublicKeySerializable) o;
+        return keySize == that.keySize &&
+                owner.equals(that.owner) &&
+                publicKey.equals(that.publicKey);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(owner, keySize, publicKey);
     }
 
     public String getOwner() {
