@@ -35,6 +35,15 @@
         android:drawableLeft="@drawable/ic_baseline_alarm_24" />
 
     <Button
+        android:id="@+id/btn_addOthersKeys"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Add Others Keys"
+        android:drawableLeft="@drawable/ic_baseline_alarm_24" />
+
+    <Button
         android:id="@+id/btn_viewKeys"
         android:layout_margin="10dp"
         android:layout_width="match_parent"

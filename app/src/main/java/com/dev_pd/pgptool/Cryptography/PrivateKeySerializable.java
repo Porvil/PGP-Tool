@@ -80,4 +80,19 @@ public class PrivateKeySerializable implements Serializable {
 
         return Arrays.equals(hash, hashPassword);
     }
+
+    public boolean changePassword(String oldPswd, String newPswd){
+        byte[] hash = Utility.getHash(oldPswd, salt);
+
+        if(Arrays.equals(hash, hashPassword)){
+            byte[] newRandomSalt = Utility.getRandomSalt();
+            byte[] newHash = Utility.getHash(newPswd, newRandomSalt);
+            this.hashPassword = newHash;
+            this.salt = newRandomSalt;
+            return true;
+        }
+
+        return false;
+    }
+
 }

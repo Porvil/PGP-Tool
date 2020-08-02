@@ -11,6 +11,35 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/owner" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/keyName" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/keySize" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="2"
         android:orientation="vertical">
 
@@ -19,6 +48,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:text="1"
+            android:gravity="center_vertical"
             android:id="@+id/tv_myKeysOwner"/>
 
         <TextView
@@ -26,6 +56,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:text="2"
+            android:gravity="center_vertical"
             android:id="@+id/tv_myKeysKeyName"/>
 
         <TextView
@@ -33,6 +64,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:text="3"
+            android:gravity="center_vertical"
             android:id="@+id/tv_myKeysKeySize"/>
 
     </LinearLayout>
@@ -41,7 +73,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:orientation="vertical">
 
         <Button
@@ -57,6 +89,13 @@
             android:layout_weight="1"
             android:id="@+id/btn_myKeysPrivateKey"
             android:text="Private Key"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:id="@+id/btn_myKeysDelete"
+            android:text="Delete Key"/>
 
     </LinearLayout>
 

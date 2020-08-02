@@ -30,5 +30,9 @@
     <string name="myKeys">My Keys</string>
     <string name="othersKeys">Other\'s Keys</string>
 
+    <string name="owner">Owner: </string>
+    <string name="keyName">Key Name: </string>
+    <string name="keySize">Key Size: </string>
+
 
 </resources>
