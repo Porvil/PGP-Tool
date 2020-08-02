@@ -1,10 +1,13 @@
 package com.dev_pd.pgptool.Cryptography;
 
 import java.io.Serializable;
+import java.util.Arrays;
+
 import javax.crypto.Cipher;
 
 public class EncrpytedPGPObject implements  Serializable{
-    
+
+    private static final long serialVersionUID = 50L;
     private String fileName;
     private int rsaKeyLength;
     private byte[] digitalSignature;
@@ -19,11 +22,6 @@ public class EncrpytedPGPObject implements  Serializable{
         this.iv = iv;
         this.cipherText = cipherText;
         this.encryptedAESKey = encryptedAESKey;
-    }
-
-    @Override
-    public String toString() {
-        return "EncrpytedPGPObject{" + "fileName=" + fileName + ", rsaKeyLength=" + rsaKeyLength + ", digitalSignature=" + digitalSignature + ", iv=" + iv + ", cipherText=" + cipherText + ", encryptedAESKey=" + encryptedAESKey + '}';
     }
 
     public String getFileName() {
@@ -49,7 +47,16 @@ public class EncrpytedPGPObject implements  Serializable{
     public byte[] getEncryptedAESKey() {
         return encryptedAESKey;
     }
-    
-    
-    
+
+    @Override
+    public String toString() {
+        return "EncrpytedPGPObject{" +
+                "fileName='" + fileName + '\'' +
+                ", rsaKeyLength=" + rsaKeyLength +
+                ", digitalSignature=" + Arrays.toString(digitalSignature) +
+                ", iv=" + Arrays.toString(iv) +
+                ", cipherText=" + Arrays.toString(cipherText) +
+                ", encryptedAESKey=" + Arrays.toString(encryptedAESKey) +
+                '}';
+    }
 }

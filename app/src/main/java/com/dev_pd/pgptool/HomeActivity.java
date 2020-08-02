@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.UI.FileUtilsMine;
+import com.dev_pd.pgptool.UI.HelperFunctions;
 
 import java.io.File;
 
@@ -100,21 +102,26 @@ public class HomeActivity extends AppCompatActivity {
                 String path = fileUtilsMine.getPath(uri);
 //                gpath = path;
 
+                File file = new File(path);
+                if(!HelperFunctions.isValidKeyFile(file.getName())){
+                    System.out.println("not a key file");
+                    return;
+                }
+
                 System.out.println(path);
 
-                File file = new File(path);
-                System.out.println();
-                // Perform operations on the document using its URI.
-
-
-//                PublicKeySerializable publicKeySerializable = HelperFunctions.readPublicKeySerializable(path);
-
-//                System.out.println(publicKeySerializable.getPublicKey().);
-//                try {
-//                    System.out.println(Utility.getString(publicKeySerializable.getPublicKey().getEncoded()));
-//                } catch (UnsupportedEncodingException e) {
-//                    e.printStackTrace();
-//                }
+                KeySerializable keySerializable = HelperFunctions.readKey(path);
+                if(keySerializable != null) {
+                    if (keySerializable.getKeyType().equals(Constants.PUBLICKEY)) {
+                        HelperFunctions.writeFileExternalStorageOther(keySerializable.getKeyName(), Constants.EXTENSION_KEY, keySerializable);
+                    }
+                    else {
+                        System.out.println("Not a public key");
+                    }
+                }
+                else {
+                    System.out.println("NUll key");
+                }
 
             }
         }

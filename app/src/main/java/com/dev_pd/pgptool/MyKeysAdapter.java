@@ -135,7 +135,6 @@ class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
                     }
                 });
                 final AlertDialog dialog = builder.create();
-                dialog.findViewById(R.id.et_oldpswd);
                 dialog.show();
 
 

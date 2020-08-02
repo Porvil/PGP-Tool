@@ -7,7 +7,6 @@ import com.dev_pd.pgptool.Constants;
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Cryptography.PrivateKeySerializable;
 import com.dev_pd.pgptool.Cryptography.PublicKeySerializable;
-import com.dev_pd.pgptool.R;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,6 +21,47 @@ public class HelperFunctions {
 
     public static boolean writeFileExternalStorage(String fileName, String extension, Object object){
 
+                    //Checking the availability state of the External Storage.
+                    String state = Environment.getExternalStorageState();
+                    if (!Environment.MEDIA_MOUNTED.equals(state)) {
+                        System.out.println("Storage is not mounted, returning!!");
+                        //If it isn't mounted - we can't write into it.
+                        return false;
+                    }
+
+                    String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.SELF_DIRECTORY;
+                    File rootFile = new File(path);
+                    if(!rootFile.exists()){
+                        boolean mkdir = rootFile.mkdirs();
+                        if(!mkdir){
+                            System.out.println("Path/file couldn't be created");
+                return false;
+            }
+                    }
+        System.out.println(path);
+
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(path + "/" + fileName + extension);
+            ObjectOutputStream out = new ObjectOutputStream(fileOutputStream);
+
+            // Method for serialization of object
+            out.writeObject(object);
+
+            out.close();
+            fileOutputStream.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return true;
+    }
+
+    public static boolean writeFileExternalStorageEnc(String fileName, String extension, Object object){
+
         //Checking the availability state of the External Storage.
         String state = Environment.getExternalStorageState();
         if (!Environment.MEDIA_MOUNTED.equals(state)) {
@@ -30,7 +70,48 @@ public class HelperFunctions {
             return false;
         }
 
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.SELF_DIRECTORY;
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.ENC_DIRECTORY;
+        File rootFile = new File(path);
+        if(!rootFile.exists()){
+            boolean mkdir = rootFile.mkdirs();
+            if(!mkdir){
+                System.out.println("Path/file couldn't be created");
+                return false;
+            }
+        }
+        System.out.println(path);
+
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(path + "/" + fileName + extension);
+            ObjectOutputStream out = new ObjectOutputStream(fileOutputStream);
+
+            // Method for serialization of object
+            out.writeObject(object);
+
+            out.close();
+            fileOutputStream.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return true;
+    }
+
+    public static boolean writeFileExternalStorageOther(String fileName, String extension, Object object){
+
+        //Checking the availability state of the External Storage.
+        String state = Environment.getExternalStorageState();
+        if (!Environment.MEDIA_MOUNTED.equals(state)) {
+            System.out.println("Storage is not mounted, returning!!");
+            //If it isn't mounted - we can't write into it.
+            return false;
+        }
+
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.OTHERS_DIRECTORY;
         File rootFile = new File(path);
         if(!rootFile.exists()){
             boolean mkdir = rootFile.mkdirs();
@@ -160,8 +241,15 @@ public class HelperFunctions {
     }
 
     public static KeySerializable readKey(String path){
+        KeySerializable object;
+        try {
+             object = (KeySerializable) readSerializedObject(path);
+        }
+        catch (ClassCastException e){
+            System.out.println("Exception = " + e);
+            return null;
+        }
 
-        KeySerializable object = (KeySerializable) readSerializedObject(path);
         if(object == null)
             return null;
 
@@ -201,6 +289,44 @@ public class HelperFunctions {
                 return true;
 
         return false;
+    }
+
+    public static byte[] readFile(String path){
+        byte fileContent[] = null;
+        File file = new File(path);
+        FileInputStream fin = null;
+        try {
+            // create FileInputStream object
+            fin = new FileInputStream(file);
+
+            fileContent = new byte[(int)file.length()];
+
+            // Reads up to certain bytes of data from this input stream into an array of bytes.
+            fin.read(fileContent);
+            //create string from byte array
+            String s = new String(fileContent);
+            System.out.println("File content: " + s);
+
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("File not found" + e);
+        }
+        catch (IOException ioe) {
+            System.out.println("Exception while reading file " + ioe);
+        }
+        finally {
+            // close the streams using close method
+            try {
+                if (fin != null) {
+                    fin.close();
+                }
+            }
+            catch (IOException ioe) {
+                System.out.println("Error while closing stream: " + ioe);
+            }
+        }
+
+        return fileContent;
     }
 
 }
