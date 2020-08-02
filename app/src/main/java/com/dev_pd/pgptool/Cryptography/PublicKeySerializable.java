@@ -47,4 +47,5 @@ public class PublicKeySerializable implements Serializable {
     public PublicKey getPublicKey() {
         return publicKey;
     }
+
 }

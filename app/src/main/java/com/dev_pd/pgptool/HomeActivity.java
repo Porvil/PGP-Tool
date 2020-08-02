@@ -17,11 +17,11 @@ import java.io.File;
 
 public class HomeActivity extends AppCompatActivity {
 
-    Button btn_encrypt;
-    Button btn_decrypt;
-    Button btn_addKeys;
-    Button btn_addOthersKeys;
-    Button btn_viewKeys;
+    private Button btn_encrypt;
+    private Button btn_decrypt;
+    private Button btn_addKeys;
+    private Button btn_addOthersKeys;
+    private Button btn_viewKeys;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

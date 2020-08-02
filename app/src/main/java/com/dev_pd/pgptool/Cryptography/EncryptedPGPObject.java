@@ -3,9 +3,7 @@ package com.dev_pd.pgptool.Cryptography;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import javax.crypto.Cipher;
-
-public class EncrpytedPGPObject implements  Serializable{
+public class EncryptedPGPObject implements  Serializable{
 
     private static final long serialVersionUID = 50L;
     private String fileName;
@@ -15,7 +13,7 @@ public class EncrpytedPGPObject implements  Serializable{
     private byte[] cipherText;
     private byte[] encryptedAESKey;
 
-    public EncrpytedPGPObject(String fileName, int rsaKeyLength, byte[] digitalSignature, byte[] iv, byte[] cipherText, byte[] encryptedAESKey) {
+    public EncryptedPGPObject(String fileName, int rsaKeyLength, byte[] digitalSignature, byte[] iv, byte[] cipherText, byte[] encryptedAESKey) {
         this.fileName = fileName;
         this.rsaKeyLength = rsaKeyLength;
         this.digitalSignature = digitalSignature;

@@ -15,12 +15,12 @@ import java.security.KeyPair;
 
 public class RSAKeyGeneratorTask extends AsyncTask<Integer, Integer, Boolean> {
 
-    Context context;
-    ProgressDialog progressDialog;
-    int keySize;
-    String owner;
-    String keyName;
-    String password;
+    private Context context;
+    private ProgressDialog progressDialog;
+    private int keySize;
+    private String owner;
+    private String keyName;
+    private String password;
 
     public RSAKeyGeneratorTask(Context context, int keySize, String owner, String keyName, String password) {
         this.context = context;

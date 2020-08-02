@@ -1,7 +1,5 @@
 package com.dev_pd.pgptool;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,15 +11,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dev_pd.pgptool.Cryptography.EncrpytedPGPObject;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.dev_pd.pgptool.Cryptography.EncryptedPGPObject;
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Cryptography.PGP;
 import com.dev_pd.pgptool.UI.FileUtilsMine;
 import com.dev_pd.pgptool.UI.HelperFunctions;
 
 import java.io.File;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 
 public class EncryptActivity extends AppCompatActivity {
 
@@ -111,29 +109,24 @@ public class EncryptActivity extends AppCompatActivity {
                     return;
                 }
 
-                try {
-                    PGP pgp = new PGP();
-                    String pswd = "m";
-                    String path = filePath;
-                    pgp.setMyPrivateKey(myKey.getPrivateKeySerializable().getPrivateKey(pswd));
-                    pgp.setMyPublicKey(myKey.getPublicKeySerializable().getPublicKey());
-                    pgp.setOthersPublicKey(othersKey.getPublicKeySerializable().getPublicKey());
+                PGP pgp = new PGP();
+                String pswd = "m";
+                String path = filePath;
+                pgp.setMyPrivateKey(myKey.getPrivateKeySerializable().getPrivateKey(pswd));
+                pgp.setMyPublicKey(myKey.getPublicKeySerializable().getPublicKey());
+                pgp.setOthersPublicKey(othersKey.getPublicKeySerializable().getPublicKey());
 
-                    byte[] bytes = HelperFunctions.readFile(path);
+                byte[] bytes = HelperFunctions.readFile(path);
 
-                    EncrpytedPGPObject encrypt = pgp.encrypt(bytes);
+                EncryptedPGPObject encrypt = pgp.encrypt(bytes);
 
-                    boolean b = HelperFunctions.writeFileExternalStorageEnc(fileName, Constants.EXTENSION_DATA, encrypt);
+                boolean b = HelperFunctions.writeFileExternalStorageEnc(fileName, Constants.EXTENSION_DATA, encrypt);
 
-                    if(b){
-                        Toast.makeText(EncryptActivity.this, "Success", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        Toast.makeText(EncryptActivity.this, "Fail", Toast.LENGTH_SHORT).show();
-                    }
-
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
+                if(b){
+                    Toast.makeText(EncryptActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(EncryptActivity.this, "Fail", Toast.LENGTH_SHORT).show();
                 }
 
 

@@ -16,7 +16,6 @@ public class ManageKeysActivity extends AppCompatActivity {
     private EditText et_manageKeysOwner;
     private EditText et_manageKeysKeyName;
     private EditText et_manageKeysPSWD;
-
     private Button btn_manageKeysCreate;
 
     @Override

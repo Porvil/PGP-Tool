@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Environment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Cryptography.PrivateKeySerializable;
-import com.dev_pd.pgptool.Cryptography.Utility;
 import com.dev_pd.pgptool.UI.HelperFunctions;
 
 import java.io.File;
@@ -28,7 +26,7 @@ import java.util.ArrayList;
 
 class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
 
-    Context context;
+    private Context context;
     private ArrayList<KeySerializable> keySerializables;
     private ArrayList<String> keysPath;
 
@@ -52,7 +50,7 @@ class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
                                                       int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.my_text_view, parent, false);
+                .inflate(R.layout.item_mykeys, parent, false);
 
         MyViewHolder vh = new MyViewHolder(v);
         return vh;
@@ -108,7 +106,7 @@ class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
             @Override
             public void onClick(View v) {
 
-                View view = LayoutInflater.from(context).inflate(R.layout.changepswd, null);
+                View view = LayoutInflater.from(context).inflate(R.layout.dialog_changepassword, null);
                 final EditText et_oldpswd = view.findViewById(R.id.et_oldpswd);
                 final EditText et_newpswd = view.findViewById(R.id.et_newpswd);
                 final EditText et_confirmnewpswd = view.findViewById(R.id.et_confirmnewpswd);
@@ -116,15 +114,11 @@ class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
                 Button btn_changePSWD = view.findViewById(R.id.btn_changePSWD);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-                builder.setMessage("are you sure, you want to delete this key?");
                 builder.setView(view);
                 builder.setTitle("Change Password");
                 builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
-
 
                     }
                 });
@@ -136,7 +130,6 @@ class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
                 });
                 final AlertDialog dialog = builder.create();
                 dialog.show();
-
 
 
                 btn_changePSWD.setOnClickListener(new View.OnClickListener() {

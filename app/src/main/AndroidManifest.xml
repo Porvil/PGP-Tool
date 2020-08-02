@@ -15,24 +15,30 @@
         <activity
             android:name=".ViewKeysActivity"
             android:label="@string/title_activity_view_keys"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".ManageKeysActivity" />
-        <activity android:name=".DecryptActivity" />
-        <activity android:name=".EncryptActivity" />
-        <activity android:name=".HomeActivity">
+        <activity
+            android:name=".ManageKeysActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".DecryptActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".EncryptActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".HomeActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- <activity android:name=".test"></activity> -->
-        <activity android:name=".UI.HomeActivity2" />
-        <activity android:name=".UI.SplashActivity">
-
+        </activity>
+        <activity
+            android:name=".UI.SplashActivity"
+            android:launchMode="singleTask">
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
@@ -40,8 +46,8 @@
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.dev_pd.pgptool.MyKeysAdapter"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />

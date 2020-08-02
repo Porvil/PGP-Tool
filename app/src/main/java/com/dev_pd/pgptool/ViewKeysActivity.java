@@ -16,17 +16,14 @@ import java.util.ArrayList;
 
 public class ViewKeysActivity extends AppCompatActivity {
 
-    ViewPager viewPager;
-    SectionsPagerAdapter sectionsPagerAdapter;
-    TabLayout tabs;
-    ArrayList<KeySerializable> myKeys;
-    ArrayList<KeySerializable> othersKeys;
+    private ViewPager viewPager;
+    private SectionsPagerAdapter sectionsPagerAdapter;
+    private TabLayout tabs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_keys);
-        myKeys = new ArrayList<>();
 
         viewPager = findViewById(R.id.view_pager);
         sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());

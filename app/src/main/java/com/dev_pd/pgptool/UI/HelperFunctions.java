@@ -1,6 +1,5 @@
 package com.dev_pd.pgptool.UI;
 
-import android.content.Context;
 import android.os.Environment;
 
 import com.dev_pd.pgptool.Constants;

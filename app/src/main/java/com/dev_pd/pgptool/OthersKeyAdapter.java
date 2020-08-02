@@ -36,7 +36,7 @@ class OthersKeyAdapter extends RecyclerView.Adapter<OthersKeyAdapter.MyViewHolde
                                                             int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.my_text_view, parent, false);
+                .inflate(R.layout.item_mykeys, parent, false);
 
         MyViewHolder vh = new MyViewHolder(v);
         return vh;

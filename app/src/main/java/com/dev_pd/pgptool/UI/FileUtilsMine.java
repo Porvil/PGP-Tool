@@ -1,5 +1,13 @@
 package com.dev_pd.pgptool.UI;
 
+/*
+https://stackoverflow.com/questions/13209494/how-to-get-the-full-file-path-from-uri/60642994#answer-60642994
+
+answered Apr 2 '19 at 7:41
+satyawan hajare
+
+ */
+
 import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
@@ -18,9 +26,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 public class FileUtilsMine {
-    private static Uri contentUri = null;
 
-    Context context;
+    private static Uri contentUri = null;
+    private Context context;
 
     public FileUtilsMine( Context context) {
         this.context=context;

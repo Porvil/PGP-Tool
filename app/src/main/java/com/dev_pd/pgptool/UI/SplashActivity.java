@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.view.WindowManager;
 
 import com.dev_pd.pgptool.Constants;
+import com.dev_pd.pgptool.HomeActivity;
 import com.dev_pd.pgptool.R;
 
 public class SplashActivity extends AppCompatActivity {
@@ -24,7 +25,7 @@ public class SplashActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intentHomeScreen = new Intent(SplashActivity.this, HomeActivity2.class);
+                Intent intentHomeScreen = new Intent(SplashActivity.this, HomeActivity.class);
                 startActivity(intentHomeScreen);
                 finish();
             }

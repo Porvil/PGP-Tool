@@ -8,17 +8,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.MyKeysFragment;
 import com.dev_pd.pgptool.OtherKeysFragment;
 import com.dev_pd.pgptool.R;
 
-import java.util.ArrayList;
-
-/**
- * A [FragmentPagerAdapter] that returns a fragment corresponding to
- * one of the sections/tabs/pages.
- */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes
@@ -29,8 +22,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         super(fm);
         mContext = context;
     }
-
-
 
     @Override
     public Fragment getItem(int position) {
