@@ -3,7 +3,7 @@ package com.dev_pd.pgptool.Cryptography;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public class EncryptedPGPObject implements  Serializable{
+public class EncryptedPGPObject implements Serializable{
 
     private static final long serialVersionUID = 50L;
     private String fileName;
@@ -57,4 +57,5 @@ public class EncryptedPGPObject implements  Serializable{
                 ", encryptedAESKey=" + Arrays.toString(encryptedAESKey) +
                 '}';
     }
+
 }

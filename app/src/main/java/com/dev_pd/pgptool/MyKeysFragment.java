@@ -20,6 +20,9 @@ import com.dev_pd.pgptool.UI.HelperFunctions;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MyKeysFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -31,6 +34,9 @@ public class MyKeysFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     private ArrayList<KeySerializable> keySerializables;
     private ArrayList<String> keysPath;
+
+    private ExecutorService executorService;
+    private Runnable runnable;
 
     public MyKeysFragment() {
 
@@ -56,6 +62,8 @@ public class MyKeysFragment extends Fragment implements SwipeRefreshLayout.OnRef
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        executorService = Executors.newSingleThreadExecutor();
+
         keySerializables = new ArrayList<>();
         keysPath = new ArrayList<>();
         context = getContext();
@@ -77,15 +85,67 @@ public class MyKeysFragment extends Fragment implements SwipeRefreshLayout.OnRef
         mAdapter = new MyKeysAdapter(context, keySerializables, keysPath);
         recyclerView.setAdapter(mAdapter);
 
-        LoadMyKeysTask loadMyKeysTask = new LoadMyKeysTask(context);
-        loadMyKeysTask.execute();
+//        LoadMyKeysTask loadMyKeysTask = new LoadMyKeysTask(context);
+//        loadMyKeysTask.execute();
+
+        final Runnable refresh = new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        };
+
+
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("----------------------------------------------------------");
+                String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.SELF_DIRECTORY;
+                File directory = new File(path);
+                File[] files = directory.listFiles();
+
+                keysPath.clear();
+                keySerializables.clear();
+                if(files != null && files.length > 0) {
+                    for (File curFile : files) {
+                        String curPath = curFile.getAbsolutePath();
+                        System.out.println(curFile.getName());
+                        String name = curFile.getName();
+                        if (HelperFunctions.isValidKeyFile(name)) {
+                            KeySerializable keySerializable = HelperFunctions.readKey(curPath);
+                            System.out.println(keySerializable);
+                            if (!keySerializables.contains(keySerializable)) {
+                                String keyNameInsideFile = keySerializable.getKeyName() + Constants.EXTENSION_KEY;
+                                if (keyNameInsideFile.equals(curFile.getName())) {
+                                    keySerializables.add(keySerializable);
+                                    keysPath.add(curPath);
+                                }
+                            }
+                            System.out.println(keySerializable != null);
+                        }
+                        else {
+                            System.out.println("shit : " + name);
+                        }
+
+                    }
+                }
+
+                getActivity().runOnUiThread(refresh);
+            }
+        };
+
+        executorService.execute(runnable);
 
     }
 
     @Override
     public void onRefresh() {
-        LoadMyKeysTask loadMyKeysTask = new LoadMyKeysTask(context);
-        loadMyKeysTask.execute();
+//        LoadMyKeysTask loadMyKeysTask = new LoadMyKeysTask(context);
+//        loadMyKeysTask.execute();
+
+        executorService.execute(runnable);
+
     }
 
     class LoadMyKeysTask extends AsyncTask<Void, Integer, Void> {

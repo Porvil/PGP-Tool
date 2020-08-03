@@ -1,15 +1,18 @@
 package com.dev_pd.pgptool;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.dev_pd.pgptool.Cryptography.EncryptedPGPObject;
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Cryptography.PGP;
+import com.dev_pd.pgptool.Cryptography.Utility;
 import com.dev_pd.pgptool.UI.FileUtilsMine;
 import com.dev_pd.pgptool.UI.HelperFunctions;
 
@@ -26,6 +30,8 @@ import org.w3c.dom.Text;
 
 import java.io.File;
 import java.security.PrivateKey;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class EncryptActivity extends AppCompatActivity {
 
@@ -39,9 +45,12 @@ public class EncryptActivity extends AppCompatActivity {
     private TextView tv_enc_othersKey;
 
     private String filePath;
+    private String fileName;
     private String password;
     private KeySerializable myKey;
     private KeySerializable othersKey;
+    private ProgressDialog show;
+    ExecutorService executorService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +65,25 @@ public class EncryptActivity extends AppCompatActivity {
         tv_enc_FileName = findViewById(R.id.tv_enc_FileName);
         tv_enc_myKey = findViewById(R.id.tv_enc_myKey);
         tv_enc_othersKey = findViewById(R.id.tv_enc_othersKey);
+
+        executorService = Executors.newSingleThreadExecutor();
+
+        final Runnable success = new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(EncryptActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                show.cancel();
+            }
+        };
+
+        final Runnable failure = new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(EncryptActivity.this, "Fail", Toast.LENGTH_SHORT).show();
+                show.cancel();
+            }
+        };
+
 
         btn_encSelectFile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,6 +111,8 @@ public class EncryptActivity extends AppCompatActivity {
 
                 // Optionally, specify a URI for the file that should appear in the
                 // system file picker when it loads.
+//                Uri pickerInitialUri = Uri.parse(HelperFunctions.getPGPDirectoryPath() + Constants.SELF_DIRECTORY);
+//                System.out.println(pickerInitialUri.getPath());
 //                intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
 
                 startActivityForResult(intent, 5001);
@@ -109,40 +139,40 @@ public class EncryptActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String fileName = et_setEncFileName.getText().toString().trim();
+                final String encFileName = et_setEncFileName.getText().toString().trim();
 
                 if(TextUtils.isEmpty(fileName)){
                     et_setEncFileName.setError("Cant be empty");
                     return;
                 }
 
+                show = ProgressDialog.show(EncryptActivity.this, "Encrypting. Please wait...",
+                        "Could Take several minutes if selected file is large.", true);
+
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
+                        PGP pgp = new PGP(myKey.getKeySize());
+                        pgp.setMyPrivateKey(myKey.getPrivateKeySerializable().getPrivateKey(password));
+                        pgp.setMyPublicKey(myKey.getPublicKeySerializable().getPublicKey());
+                        pgp.setOthersPublicKey(othersKey.getPublicKeySerializable().getPublicKey());
 
+                        System.out.println(filePath);
+                        byte[] bytes = HelperFunctions.readFile(filePath);
+
+                        EncryptedPGPObject encrypt = pgp.encrypt(bytes,fileName);
+
+                        boolean b = HelperFunctions.writeFileExternalStorageEnc(encFileName, Constants.EXTENSION_DATA, encrypt);
+                        if(b){
+                            runOnUiThread(success);
+                        }
+                        else{
+                            runOnUiThread(failure);
+                        }
                     }
                 };
 
-                PGP pgp = new PGP();
-                String pswd = password;
-                String path = filePath;
-                pgp.setMyPrivateKey(myKey.getPrivateKeySerializable().getPrivateKey(pswd));
-                pgp.setMyPublicKey(myKey.getPublicKeySerializable().getPublicKey());
-                pgp.setOthersPublicKey(othersKey.getPublicKeySerializable().getPublicKey());
-
-                byte[] bytes = HelperFunctions.readFile(path);
-
-                EncryptedPGPObject encrypt = pgp.encrypt(bytes);
-
-                boolean b = HelperFunctions.writeFileExternalStorageEnc(fileName, Constants.EXTENSION_DATA, encrypt);
-
-                if(b){
-                    Toast.makeText(EncryptActivity.this, "Success", Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    Toast.makeText(EncryptActivity.this, "Fail", Toast.LENGTH_SHORT).show();
-                }
-
+                executorService.execute(runnable);
 
             }
         });
@@ -162,6 +192,12 @@ public class EncryptActivity extends AppCompatActivity {
 
                 FileUtilsMine fileUtilsMine = new FileUtilsMine(this);
                 String path = fileUtilsMine.getPath(uri);
+                String dataFileName = uri.getLastPathSegment();
+                System.out.println(dataFileName);
+
+                if(dataFileName != null){
+                    fileName = dataFileName;
+                }
 
                 filePath = path;
                 tv_enc_FileName.setText(filePath);
@@ -193,7 +229,9 @@ public class EncryptActivity extends AppCompatActivity {
                         View view = LayoutInflater.from(EncryptActivity.this).inflate(R.layout.dialog_enterpassword, null);
 
                         final EditText et_enterpswd = view.findViewById(R.id.et_enterpswd);
-                        Button btn_confirmpswd = view.findViewById(R.id.btn_confirmpswd);
+                        final ProgressBar progressBar = view.findViewById(R.id.progressBar);
+//                        progressBar.setVisibility(View.INVISIBLE);
+                        final Button btn_confirmpswd = view.findViewById(R.id.btn_confirmpswd);
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(EncryptActivity.this);
                         builder.setView(view);
@@ -216,24 +254,62 @@ public class EncryptActivity extends AppCompatActivity {
                         btn_confirmpswd.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                String pswd = et_enterpswd.getText().toString();
+                                final String pswd = et_enterpswd.getText().toString();
 
                                 if(TextUtils.isEmpty(pswd)){
                                     et_enterpswd.setError("Cant be empty");
                                     return;
                                 }
 
-                                PrivateKey privateKey = keySerializable.getPrivateKeySerializable().getPrivateKey(pswd);
+//                                ProgressDialog show1 = ProgressDialog.show(EncryptActivity.this, "Encrypting. Please wait...",
+//                                        "Could Take several minutes if selected file is large.", true);
 
-                                if(privateKey == null){
-                                    et_enterpswd.setError("Wrong password");
-                                    return;
-                                }
+                                final Runnable wrongpswd = new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        et_enterpswd.setError("Wrong password");
+                                    }
+                                };
 
-                                myKey = keySerializable;
-                                tv_enc_myKey.setText(myKey.getKeyName());
-                                password = pswd;
-                                dialog.dismiss();
+                                final Runnable correctpswd = new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        dialog.dismiss();
+                                    }
+                                };
+
+
+                                executorService.execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        PrivateKey privateKey = keySerializable.getPrivateKeySerializable().getPrivateKey(pswd);
+//
+                                        if(privateKey == null){
+                                            //error here
+                                            runOnUiThread(wrongpswd);
+                                            return;
+                                        }
+
+                                        myKey = keySerializable;
+                                        tv_enc_myKey.setText(myKey.getKeyName());
+                                        password = pswd;
+                                        runOnUiThread(correctpswd);
+
+                                    }
+                                });
+
+//                                PrivateKey privateKey = keySerializable.getPrivateKeySerializable().getPrivateKey(pswd);
+//
+//                                if(privateKey == null){
+//                                    et_enterpswd.setError("Wrong password");
+//
+//                                    return;
+//                                }
+//
+//                                myKey = keySerializable;
+//                                tv_enc_myKey.setText(myKey.getKeyName());
+//                                password = pswd;
+//                                dialog.dismiss();
                             }
                         });
 

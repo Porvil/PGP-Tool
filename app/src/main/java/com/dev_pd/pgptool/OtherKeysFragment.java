@@ -20,6 +20,8 @@ import com.dev_pd.pgptool.UI.HelperFunctions;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class OtherKeysFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -31,6 +33,9 @@ public class OtherKeysFragment extends Fragment implements SwipeRefreshLayout.On
 
     private ArrayList<KeySerializable> keySerializables;
     private ArrayList<String> keysPath;
+
+    private ExecutorService executorService;
+    private Runnable runnable;
 
     public OtherKeysFragment() {
 
@@ -55,7 +60,10 @@ public class OtherKeysFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         context = getContext();
+        executorService = Executors.newSingleThreadExecutor();
+
         keySerializables = new ArrayList<>();
         keysPath = new ArrayList<>();
         recyclerView = view.findViewById(R.id.rv_othersKeys);
@@ -74,14 +82,66 @@ public class OtherKeysFragment extends Fragment implements SwipeRefreshLayout.On
         mAdapter = new OthersKeyAdapter(keySerializables, keysPath);
         recyclerView.setAdapter(mAdapter);
 
-        LoadOthersKeysTask loadOthersKeysTask = new LoadOthersKeysTask(context);
-        loadOthersKeysTask.execute();
+        final Runnable refresh = new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        };
+
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("----------------------------------------------------------");
+                String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.OTHERS_DIRECTORY;
+                File directory = new File(path);
+                File[] files = directory.listFiles();
+
+                keysPath.clear();
+                keySerializables.clear();
+                if(files != null && files.length > 0) {
+                    for (File curFile : files) {
+                        String curPath = curFile.getAbsolutePath();
+                        System.out.println(curFile.getName());
+                        String name = curFile.getName();
+                        if (HelperFunctions.isValidKeyFile(name)) {
+                            KeySerializable keySerializable = HelperFunctions.readKey(curPath);
+                            System.out.println(keySerializable);
+                            if (!keySerializables.contains(keySerializable)) {
+                                String keyNameInsideFile = keySerializable.getKeyName() + Constants.EXTENSION_KEY;
+                                if(keyNameInsideFile.equals(curFile.getName())) {
+                                    keySerializables.add(keySerializable);
+                                    keysPath.add(curPath);
+                                }
+                            }
+                            System.out.println(keySerializable != null);
+                        } else {
+                            System.out.println("shit : " + name);
+                        }
+
+                    }
+                }
+
+                getActivity().runOnUiThread(refresh);
+            }
+        };
+
+        executorService.execute(runnable);
+
+
+//        LoadOthersKeysTask loadOthersKeysTask = new LoadOthersKeysTask(context);
+//        loadOthersKeysTask.execute();
+
     }
 
     @Override
     public void onRefresh() {
-        LoadOthersKeysTask loadOthersKeysTask = new LoadOthersKeysTask(context);
-        loadOthersKeysTask.execute();
+//        LoadOthersKeysTask loadOthersKeysTask = new LoadOthersKeysTask(context);
+//        loadOthersKeysTask.execute();
+
+        executorService.execute(runnable);
+
     }
 
     class LoadOthersKeysTask extends AsyncTask<Void, Integer, Void> {
