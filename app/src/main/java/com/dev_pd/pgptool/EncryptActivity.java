@@ -1,16 +1,19 @@
 package com.dev_pd.pgptool;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dev_pd.pgptool.Cryptography.EncryptedPGPObject;
@@ -19,7 +22,10 @@ import com.dev_pd.pgptool.Cryptography.PGP;
 import com.dev_pd.pgptool.UI.FileUtilsMine;
 import com.dev_pd.pgptool.UI.HelperFunctions;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
+import java.security.PrivateKey;
 
 public class EncryptActivity extends AppCompatActivity {
 
@@ -33,6 +39,7 @@ public class EncryptActivity extends AppCompatActivity {
     private TextView tv_enc_othersKey;
 
     private String filePath;
+    private String password;
     private KeySerializable myKey;
     private KeySerializable othersKey;
 
@@ -109,8 +116,15 @@ public class EncryptActivity extends AppCompatActivity {
                     return;
                 }
 
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                };
+
                 PGP pgp = new PGP();
-                String pswd = "m";
+                String pswd = password;
                 String path = filePath;
                 pgp.setMyPrivateKey(myKey.getPrivateKeySerializable().getPrivateKey(pswd));
                 pgp.setMyPublicKey(myKey.getPublicKeySerializable().getPublicKey());
@@ -172,11 +186,58 @@ public class EncryptActivity extends AppCompatActivity {
 
                 System.out.println(path);
 
-                KeySerializable keySerializable = HelperFunctions.readKey(path);
+                final KeySerializable keySerializable = HelperFunctions.readKey(path);
                 if(keySerializable != null) {
                     if (keySerializable.getKeyType().equals(Constants.BOTHKEY)) {
-                        myKey = keySerializable;
-                        tv_enc_myKey.setText(myKey.getKeyName());
+
+                        View view = LayoutInflater.from(EncryptActivity.this).inflate(R.layout.dialog_enterpassword, null);
+
+                        final EditText et_enterpswd = view.findViewById(R.id.et_enterpswd);
+                        Button btn_confirmpswd = view.findViewById(R.id.btn_confirmpswd);
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(EncryptActivity.this);
+                        builder.setView(view);
+                        builder.setTitle("Enter Password");
+                        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(EncryptActivity.this, "canceled", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        final AlertDialog dialog = builder.create();
+                        dialog.show();
+
+                        btn_confirmpswd.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String pswd = et_enterpswd.getText().toString();
+
+                                if(TextUtils.isEmpty(pswd)){
+                                    et_enterpswd.setError("Cant be empty");
+                                    return;
+                                }
+
+                                PrivateKey privateKey = keySerializable.getPrivateKeySerializable().getPrivateKey(pswd);
+
+                                if(privateKey == null){
+                                    et_enterpswd.setError("Wrong password");
+                                    return;
+                                }
+
+                                myKey = keySerializable;
+                                tv_enc_myKey.setText(myKey.getKeyName());
+                                password = pswd;
+                                dialog.dismiss();
+                            }
+                        });
+
+
 //                        HelperFunctions.writeFileExternalStorageOther(keySerializable.getKeyName(), Constants.EXTENSION_KEY, keySerializable);
                     }
                     else {
