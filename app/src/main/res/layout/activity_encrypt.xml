@@ -8,7 +8,7 @@
     tools:context=".EncryptActivity">
 
     <LinearLayout
-        android:id="@+id/linlay_fileContainer"
+        android:id="@+id/linear_encFileContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -33,7 +33,7 @@
 
 
     <LinearLayout
-        android:id="@+id/linlay_myKeyContainer"
+        android:id="@+id/linear_encMyKeyContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -58,7 +58,7 @@
 
 
     <LinearLayout
-        android:id="@+id/linlay_othersKeyContainer"
+        android:id="@+id/linear_encOthersKeyContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -82,7 +82,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linlay_fileNameContainer"
+        android:id="@+id/linear_encFileNameContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -101,7 +101,7 @@
 
 
     <LinearLayout
-        android:id="@+id/linlay_encContainer"
+        android:id="@+id/linear_encContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

@@ -3,6 +3,7 @@ package com.dev_pd.pgptool.UI;
 import android.os.Environment;
 
 import com.dev_pd.pgptool.Constants;
+import com.dev_pd.pgptool.Cryptography.EncryptedPGPObject;
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Cryptography.PrivateKeySerializable;
 import com.dev_pd.pgptool.Cryptography.PublicKeySerializable;
@@ -14,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 public class HelperFunctions {
@@ -242,7 +244,7 @@ public class HelperFunctions {
     public static KeySerializable readKey(String path){
         KeySerializable object;
         try {
-             object = (KeySerializable) readSerializedObject(path);
+            object = (KeySerializable) readSerializedObject(path);
         }
         catch (ClassCastException e){
             System.out.println("Exception = " + e);
@@ -254,6 +256,23 @@ public class HelperFunctions {
 
         return object;
     }
+
+    public static EncryptedPGPObject readEncryptedFile(String path){
+        EncryptedPGPObject object;
+        try {
+            object = (EncryptedPGPObject) readSerializedObject(path);
+        }
+        catch (ClassCastException e){
+            System.out.println("Exception = " + e);
+            return null;
+        }
+
+        if(object == null)
+            return null;
+
+        return object;
+    }
+
 
     public static ArrayList<KeySerializable> readKeys(){
         ArrayList<KeySerializable> keySerializables = new ArrayList<>();
@@ -326,6 +345,46 @@ public class HelperFunctions {
         }
 
         return fileContent;
+    }
+
+    public static boolean writeByte(byte[] bytes, String fileName)
+    {
+        try {
+
+            // Initialize a pointer
+            // in file using OutputStream
+            String rootPath = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.DEC_DIRECTORY;
+            File rootFile = new File(rootPath);
+            if(!rootFile.exists()){
+                boolean mkdir = rootFile.mkdirs();
+                if(!mkdir){
+                    System.out.println("Path/file couldn't be created");
+                    return false;
+                }
+            }
+
+            String path = rootPath + "/" + fileName;
+            System.out.println(path);
+            File file = new File(path);
+            boolean newFile = file.createNewFile();
+            System.out.println(newFile);
+            OutputStream os = new FileOutputStream(file);
+
+            // Starts writing the bytes in it
+            os.write(bytes);
+            System.out.println("Successfully"
+                    + " byte inserted");
+
+            // Close the file
+            os.close();
+            return true;
+        }
+
+        catch (Exception e) {
+            System.out.println("Exception: " + e);
+        }
+
+        return false;
     }
 
 }

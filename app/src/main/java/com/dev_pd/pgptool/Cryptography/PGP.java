@@ -128,14 +128,14 @@ public class PGP {
         return encryptedPGPObject;
     }
 
-    public void decrypt(EncryptedPGPObject encryptedPGPObject){
+    public byte[] decrypt(EncryptedPGPObject encryptedPGPObject){
         if(encryptedPGPObject == null){
             System.out.println("Null object passed as pgp object");
-            return;
+            return null;
         }
         
         try {
-            __decrypt(encryptedPGPObject);
+            return __decrypt(encryptedPGPObject);
         } catch (UnsupportedEncodingException |
                 NoSuchAlgorithmException |
                 NoSuchPaddingException |
@@ -148,9 +148,11 @@ public class PGP {
             System.out.println("Exception = " + ex.toString());
             Logger.getLogger(PGP.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        return null;
     }
     
-    private void __decrypt(EncryptedPGPObject encryptedPGPObject) throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException, InvalidAlgorithmParameterException, SignatureException {
+    private byte[] __decrypt(EncryptedPGPObject encryptedPGPObject) throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException, InvalidAlgorithmParameterException, SignatureException {
         
         byte[] encryptedAESKey = encryptedPGPObject.getEncryptedAESKey();
         byte[] iv = encryptedPGPObject.getIv();
@@ -178,7 +180,8 @@ public class PGP {
         System.out.println("SIG = " + isCorrect);
         System.out.println("====");
         System.out.println(decryptedData);
-        
+
+        return decryptedDataBytes;
     }
 
 }

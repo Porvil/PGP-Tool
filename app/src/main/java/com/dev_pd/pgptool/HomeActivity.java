@@ -1,32 +1,46 @@
 package com.dev_pd.pgptool;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.UI.FileUtilsMine;
 import com.dev_pd.pgptool.UI.HelperFunctions;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 
 public class HomeActivity extends AppCompatActivity {
+
+    private String[] PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
 
     private Button btn_encrypt;
     private Button btn_decrypt;
     private Button btn_addKeys;
     private Button btn_addOthersKeys;
     private Button btn_viewKeys;
+    private View view;
+
+    private int reqAgain = 0;
+    private final int PERMISSION_ALL = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        view = findViewById(R.id.main);
+        checkPermissions();
 
         btn_encrypt = findViewById(R.id.btn_encrypt);
         btn_decrypt = findViewById(R.id.btn_decrypt);
@@ -124,6 +138,52 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
             }
+        }
+    }
+
+    private void checkPermissions(){
+        int MyVersion = Build.VERSION.SDK_INT;
+        if (MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            if (!hasPermissions(PERMISSIONS)) {
+                ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+            }
+        }
+    }
+
+    public boolean hasPermissions(String... permissions) {
+        if (permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_ALL:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Snackbar.make(view, "Permissions Granted",
+                            Snackbar.LENGTH_SHORT).show();
+                }
+                else {
+                    if(reqAgain == 0){
+                        Snackbar.make(view, "Use External Storage Permission is Required for app to work correctly.",
+                                Snackbar.LENGTH_LONG).show();
+                        checkPermissions();
+                        reqAgain++;
+                    }
+                    else {
+                        Snackbar.make(view, "Without permissions app wont work correctly.",
+                                Snackbar.LENGTH_LONG).show();
+                    }
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
