@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,11 +21,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.dev_pd.pgptool.Cryptography.EncryptedPGPObject;
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Cryptography.PGP;
-import com.dev_pd.pgptool.Cryptography.Utility;
 import com.dev_pd.pgptool.UI.FileUtilsMine;
 import com.dev_pd.pgptool.UI.HelperFunctions;
-
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.security.PrivateKey;
@@ -158,11 +154,11 @@ public class EncryptActivity extends AppCompatActivity {
                         pgp.setOthersPublicKey(othersKey.getPublicKeySerializable().getPublicKey());
 
                         System.out.println(filePath);
-                        byte[] bytes = HelperFunctions.readFile(filePath);
+                        byte[] bytes = HelperFunctions.readFileToBytes(filePath);
 
                         EncryptedPGPObject encrypt = pgp.encrypt(bytes,fileName);
 
-                        boolean b = HelperFunctions.writeFileExternalStorageEnc(encFileName, Constants.EXTENSION_DATA, encrypt);
+                        boolean b = HelperFunctions.writeEncryptedData(encFileName, Constants.EXTENSION_DATA, encrypt);
                         if(b){
                             runOnUiThread(success);
                         }

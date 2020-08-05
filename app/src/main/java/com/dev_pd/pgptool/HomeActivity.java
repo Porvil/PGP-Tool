@@ -127,7 +127,7 @@ public class HomeActivity extends AppCompatActivity {
                 KeySerializable keySerializable = HelperFunctions.readKey(path);
                 if(keySerializable != null) {
                     if (keySerializable.getKeyType().equals(Constants.PUBLICKEY)) {
-                        HelperFunctions.writeFileExternalStorageOther(keySerializable.getKeyName(), Constants.EXTENSION_KEY, keySerializable);
+                        HelperFunctions.writeKeySerializableOther(keySerializable.getKeyName(), Constants.EXTENSION_KEY, keySerializable);
                     }
                     else {
                         System.out.println("Not a public key");

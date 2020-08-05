@@ -145,17 +145,17 @@ public class DecryptActivity extends AppCompatActivity {
                         pgp.setOthersPublicKey(othersKey.getPublicKeySerializable().getPublicKey());
 
                         System.out.println(filePath);
-                        byte[] bytes = HelperFunctions.readFile(filePath);
+                        byte[] bytes = HelperFunctions.readFileToBytes(filePath);
 
                         EncryptedPGPObject encryptedPGPObject = HelperFunctions.readEncryptedFile(filePath);
 //                        EncryptedPGPObject encrypt = pgp.encrypt(bytes, fileName);
 
                         String fileName = encryptedPGPObject.getFileName();
-                        String decPath = HelperFunctions.getPGPDirectoryPath() + Constants.DEC_DIRECTORY;
+                        String decPath = HelperFunctions.getExternalStoragePath() + Constants.DEC_DIRECTORY;
                         String path =  decPath + "/" + fileName;
                         byte[] decryptedData = pgp.decrypt(encryptedPGPObject);
 
-                        boolean b = HelperFunctions.writeByte(decryptedData, fileName);
+                        boolean b = HelperFunctions.writeOriginalFileFromBytesData(decryptedData, fileName);
 
                         if(b){
                             runOnUiThread(success);

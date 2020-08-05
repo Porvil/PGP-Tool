@@ -114,7 +114,7 @@ public class ManageKeysActivity extends AppCompatActivity {
 
                         KeySerializable keySerializable = new KeySerializable(keyName,Constants.BOTHKEY, privateKeySerializable, publicKeySerializable);
 
-                        boolean ret = HelperFunctions.writeFileExternalStorage(keyName, Constants.EXTENSION_KEY, keySerializable);
+                        boolean ret = HelperFunctions.writeKeySerializableSelf(keyName, Constants.EXTENSION_KEY, keySerializable);
 
                         if(ret)
                             runOnUiThread(success);

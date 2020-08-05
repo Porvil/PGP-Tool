@@ -8,6 +8,7 @@ public class Constants {
     public static final String TEMP_DIRECTORY = DIRECTORY + "/Temp";
     public static final String ENC_DIRECTORY = DIRECTORY + "/Encrypted";
     public static final String DEC_DIRECTORY = DIRECTORY + "/Decrypted";
+    public static final String SEPARATOR = "/";
     public static final String EXTENSION_KEY = ".key";
     public static final String EXTENSION_DATA = ".pgpdata";
     public static final String PUBLICKEY = "PUBLIC";

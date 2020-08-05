@@ -1,7 +1,6 @@
 package com.dev_pd.pgptool;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
@@ -20,12 +18,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Cryptography.PrivateKeySerializable;
 import com.dev_pd.pgptool.UI.HelperFunctions;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.util.ArrayList;
 
 class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
 
+    private View parentView;
     private Context context;
     private ArrayList<KeySerializable> keySerializables;
     private ArrayList<String> keysPath;
@@ -39,10 +39,11 @@ class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
         }
     }
 
-    public MyKeysAdapter(Context context, ArrayList<KeySerializable> keySerializables, ArrayList<String> keysPath) {
+    public MyKeysAdapter(Context context, ArrayList<KeySerializable> keySerializables, ArrayList<String> keysPath, View view) {
         this.context = context;
         this.keysPath = keysPath;
         this.keySerializables = keySerializables;
+        this.parentView = view;
     }
 
     @Override
@@ -81,13 +82,13 @@ class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
 
                 KeySerializable publicKey = keySerializable.getShareableKey();
 
-                String tempPath = HelperFunctions.getPGPDirectoryPath() +
+                String tempPath = HelperFunctions.getExternalStoragePath() +
                         Constants.TEMP_DIRECTORY +
-                        "/" +
+                        Constants.SEPARATOR +
                         keySerializable.getKeyName() +
                         Constants.EXTENSION_KEY;
 
-                Boolean aBoolean = HelperFunctions.writeTempFileExternalStorage(tempPath, publicKey);
+                Boolean aBoolean = HelperFunctions.writeTempKeyForSharing(tempPath, publicKey);
 
                 final File file = new File(tempPath);
                 System.out.println(file.getAbsolutePath());
@@ -106,31 +107,25 @@ class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
             @Override
             public void onClick(View v) {
 
-                View view = LayoutInflater.from(context).inflate(R.layout.dialog_changepassword, null);
+                final View view = LayoutInflater.from(context).inflate(R.layout.dialog_changepassword, null);
                 final EditText et_oldpswd = view.findViewById(R.id.et_oldpswd);
                 final EditText et_newpswd = view.findViewById(R.id.et_newpswd);
                 final EditText et_confirmnewpswd = view.findViewById(R.id.et_confirmnewpswd);
 
-                Button btn_changePSWD = view.findViewById(R.id.btn_changePSWD);
+                Button btn_cancelPSWD = view.findViewById(R.id.btn_dialog_changepassword_cancelKey);
+                Button btn_changePSWD = view.findViewById(R.id.btn_dialog_changepassword_changePSWD);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setView(view);
-                builder.setTitle("Change Password");
-                builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(context, "canceled", Toast.LENGTH_SHORT).show();
-                    }
-                });
                 final AlertDialog dialog = builder.create();
                 dialog.show();
 
+                btn_cancelPSWD.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
 
                 btn_changePSWD.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -163,7 +158,7 @@ class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
                         }
 
                         if(!newP.equals(newCP)){
-                            et_confirmnewpswd.setError("Doesnt match");
+                            et_confirmnewpswd.setError("Doesn't match");
                             incomplete = true;
                         }
 
@@ -175,77 +170,73 @@ class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
                         if(!incomplete){
                             boolean b = privateKeySerializable.changePassword(oldP, newP);
                             if(b){
-                                // change file
-                                HelperFunctions.writeFileExternalStorage(keySerializable.getKeyName(), Constants.EXTENSION_KEY, keySerializable);
+                                HelperFunctions.writeKeySerializableSelf(keySerializable.getKeyName(), Constants.EXTENSION_KEY, keySerializable);
                                 notifyItemChanged(position);
-                                Toast.makeText(context, "succesfully changed", Toast.LENGTH_SHORT).show();
+                                Snackbar.make(parentView, "Password Changed Successfully.", Snackbar.LENGTH_SHORT).show();
                                 dialog.dismiss();
                             }
                             else {
-                                Toast.makeText(context, "Wrong password", Toast.LENGTH_SHORT).show();
+                                Snackbar.make(view, "Wrong Password", Snackbar.LENGTH_SHORT).show();
+                                et_oldpswd.setText("");
+                                et_newpswd.setText("");
+                                et_confirmnewpswd.setText("");
                             }
-
                         }
                     }
                 });
-
-                System.out.println(keySerializable);
-
             }
         });
 
         btn_myKeysDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("are you sure, you want to delete this key?\nThis action cant be reversed");
-                builder.setTitle("Confirm");
-                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                final View view_dialogDelete = LayoutInflater.from(context).inflate(R.layout.dialog_deletekey, null);
 
+                Button btn_cancelKey = view_dialogDelete.findViewById(R.id.btn_dialog_deletekey_cancelKey);
+                Button btn_deleteKey = view_dialogDelete.findViewById(R.id.btn_dialog_deletekey_deleteKey);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setView(view_dialogDelete);
+                final AlertDialog dialog = builder.create();
+                dialog.show();
+
+                btn_cancelKey.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                btn_deleteKey.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
                         final KeySerializable keySerializable = keySerializables.get(position);
                         //Delete from directory
-                        String tempPath = HelperFunctions.getPGPDirectoryPath() +
+                        String tempPath = HelperFunctions.getExternalStoragePath() +
                                 Constants.SELF_DIRECTORY +
                                 "/" +
                                 keySerializable.getKeyName() +
                                 Constants.EXTENSION_KEY;
                         File file = new File(tempPath);
-                        System.out.println("name " + file.getName());
-                        System.out.println("exist " + file.exists());
-                        System.out.println("abspath " + file.getAbsolutePath());
-                        System.out.println("file " + file.isFile());
-                        System.out.println("directory " + file.isDirectory());
-                        System.out.println("abs " + file.isAbsolute());
-                        System.out.println("hidden " + file.isHidden());
-                        System.out.println(tempPath);
                         if (file.exists()) {
                             boolean delete = file.delete();
-//                                boolean b = context.deleteFile(tempPath);
                             if (delete) {
-                                Toast.makeText(context, "dleeted", Toast.LENGTH_SHORT).show();
                                 keySerializables.remove(position);
                                 keysPath.remove(position);
                                 notifyItemRemoved(position);
                                 notifyItemRangeChanged(position, keySerializables.size());
-//                                holder.view.setVisibility(View.GONE);
-                            } else {
-                                Toast.makeText(context, " not dleeted", Toast.LENGTH_SHORT).show();
+                                Snackbar.make(parentView, "Key successfully Deleted.", Snackbar.LENGTH_SHORT).show();
+                                dialog.dismiss();
                             }
-                        } else {
-                            Toast.makeText(context, " doesnt exist", Toast.LENGTH_SHORT).show();
+                            else {
+                                Snackbar.make(parentView, "Failed to delete Key.", Snackbar.LENGTH_SHORT).show();
+                            }
+                        }
+                        else {
+                            Snackbar.make(parentView, "Key doesn't exist", Snackbar.LENGTH_SHORT).show();
                         }
                     }
                 });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(context, "canceled", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
             }
         });
 

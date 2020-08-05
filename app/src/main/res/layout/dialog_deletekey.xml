@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:ignore="MissingDefaultResource">
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
@@ -14,37 +12,25 @@
         android:paddingStart="15dp"
         android:paddingTop="15dp"
         android:paddingBottom="10dp"
-        android:text="Change Password"
+        android:text="Confirm Delete"
         android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <EditText
-        android:id="@+id/et_oldpswd"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:hint="Enter old password"
-        android:inputType="textPassword" />
+        android:paddingStart="15dp"
+        android:text="Are you sure you want to delete this key?"
+        android:textColor="#000000"
+        android:textSize="18sp" />
 
-    <EditText
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/et_newpswd"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:inputType="textPassword"
-        android:hint="Enter new password"/>
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/et_confirmnewpswd"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:inputType="textPassword"
-        android:hint="Confirm new password"/>
+        android:paddingStart="15dp"
+        android:text="This action cant be reversed"
+        android:textColor="@color/red" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -55,7 +41,7 @@
 
 
         <Button
-            android:id="@+id/btn_dialog_changepassword_cancelKey"
+            android:id="@+id/btn_dialog_deletekey_cancelKey"
             style="@style/AppTheme.Button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -63,7 +49,7 @@
             android:text="cancel" />
 
         <Button
-            android:id="@+id/btn_dialog_changepassword_changePSWD"
+            android:id="@+id/btn_dialog_deletekey_deleteKey"
             style="@style/AppTheme.Button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -71,7 +57,7 @@
             android:minWidth="0dp"
             android:text="confirm" />
 
-    </LinearLayout>
 
+    </LinearLayout>
 
 </LinearLayout>
