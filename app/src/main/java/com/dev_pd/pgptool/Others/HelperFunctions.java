@@ -1,8 +1,7 @@
-package com.dev_pd.pgptool.UI;
+package com.dev_pd.pgptool.Others;
 
 import android.os.Environment;
 
-import com.dev_pd.pgptool.Constants;
 import com.dev_pd.pgptool.Cryptography.EncryptedPGPObject;
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
 
@@ -203,7 +202,7 @@ public class HelperFunctions {
 
     public static boolean writeOriginalFileFromBytesData(byte[] bytes, String fileName){
         try {
-            String rootPath =getExternalStoragePath() + Constants.DEC_DIRECTORY;
+            String rootPath = getExternalStoragePath() + Constants.DEC_DIRECTORY;
             File rootFile = new File(rootPath);
             if(!rootFile.exists()){
                 boolean mkdir = rootFile.mkdirs();

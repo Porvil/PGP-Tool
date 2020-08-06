@@ -5,55 +5,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="10dp"
     android:id="@+id/main"
-    tools:context=".HomeActivity">
+    tools:context=".UI.Activities.HomeActivity">
 
     <Button
         android:id="@+id/btn_encrypt"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="10dp"
         android:layout_weight="1"
-        android:drawableLeft="@drawable/ic_baseline_alarm_24"
-        android:text="Encrypt" />
+        style="@style/Widget.MaterialComponents.Button"
+        android:textSize="24sp"
+        android:text="Encrypt File" />
 
     <Button
         android:id="@+id/btn_decrypt"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="10dp"
         android:layout_weight="1"
-        android:drawableLeft="@drawable/ic_baseline_alarm_24"
-        android:text="Decrypt" />
+        style="@style/Widget.MaterialComponents.Button"
+        android:textSize="24sp"
+        android:text="Decrypt File" />
 
     <Button
         android:id="@+id/btn_addKeys"
-        android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="Add Keys"
-        android:drawableLeft="@drawable/ic_baseline_alarm_24" />
+        style="@style/Widget.MaterialComponents.Button"
+        android:textSize="24sp"
+        android:text="Create Key" />
 
     <Button
         android:id="@+id/btn_addOthersKeys"
-        android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="Add Others Keys"
-        android:drawableLeft="@drawable/ic_baseline_alarm_24" />
+        style="@style/Widget.MaterialComponents.Button"
+        android:textSize="24sp"
+        android:text="Add Other's Keys" />
 
     <Button
         android:id="@+id/btn_viewKeys"
-        android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="View Keys"
-        android:drawableLeft="@drawable/ic_baseline_alarm_24" />
-
-
+        style="@style/Widget.MaterialComponents.Button"
+        android:textSize="24sp"
+        android:text="View Keys" />
 
 
 </LinearLayout>

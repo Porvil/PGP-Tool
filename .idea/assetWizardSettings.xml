@@ -23,7 +23,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/alarm/baseline_alarm_24.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/lock_open/baseline_lock_open_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -33,9 +33,10 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="343354" />
-                            <entry key="outputName" value="ic_baseline_alarm_24" />
-                            <entry key="sourceFile" value="C:\Users\acer\AndroidStudioProjects\PGPTool" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="color" value="03dac5" />
+                            <entry key="outputName" value="ic_view_keys" />
+                            <entry key="sourceFile" value="C:\Users\acer\AndroidStudioProjects\PGPTool\app\src\main\res\drawable-v24\key.svg" />
                           </map>
                         </option>
                       </PersistentState>

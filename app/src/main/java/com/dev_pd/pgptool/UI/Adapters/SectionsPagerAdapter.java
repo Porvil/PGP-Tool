@@ -1,4 +1,4 @@
-package com.dev_pd.pgptool.UI;
+package com.dev_pd.pgptool.UI.Adapters;
 
 import android.content.Context;
 
@@ -8,8 +8,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.dev_pd.pgptool.MyKeysFragment;
-import com.dev_pd.pgptool.OtherKeysFragment;
+import com.dev_pd.pgptool.UI.Fragments.MyKeysFragment;
+import com.dev_pd.pgptool.UI.Fragments.OtherKeysFragment;
 import com.dev_pd.pgptool.R;
 
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -44,4 +44,5 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return TAB_TITLES.length;
     }
+
 }

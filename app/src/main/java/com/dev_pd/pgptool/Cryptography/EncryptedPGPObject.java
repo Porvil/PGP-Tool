@@ -48,7 +48,7 @@ public class EncryptedPGPObject implements Serializable{
 
     @Override
     public String toString() {
-        return "EncrpytedPGPObject{" +
+        return "EncryptedPGPObject{" +
                 "fileName='" + fileName + '\'' +
                 ", rsaKeyLength=" + rsaKeyLength +
                 ", digitalSignature=" + Arrays.toString(digitalSignature) +

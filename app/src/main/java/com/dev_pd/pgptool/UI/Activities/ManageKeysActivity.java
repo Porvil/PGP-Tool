@@ -1,4 +1,4 @@
-package com.dev_pd.pgptool;
+package com.dev_pd.pgptool.UI.Activities;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -15,7 +15,9 @@ import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Cryptography.PrivateKeySerializable;
 import com.dev_pd.pgptool.Cryptography.PublicKeySerializable;
 import com.dev_pd.pgptool.Cryptography.Utility;
-import com.dev_pd.pgptool.UI.HelperFunctions;
+import com.dev_pd.pgptool.Others.Constants;
+import com.dev_pd.pgptool.Others.HelperFunctions;
+import com.dev_pd.pgptool.R;
 
 import java.security.KeyPair;
 import java.util.concurrent.ExecutorService;
@@ -112,7 +114,7 @@ public class ManageKeysActivity extends AppCompatActivity {
                         PublicKeySerializable publicKeySerializable = new PublicKeySerializable(owner, keySize, keyPair.getPublic());
                         PrivateKeySerializable privateKeySerializable = new PrivateKeySerializable(owner, keySize, keyPair.getPrivate(), hash, randomSalt);
 
-                        KeySerializable keySerializable = new KeySerializable(keyName,Constants.BOTHKEY, privateKeySerializable, publicKeySerializable);
+                        KeySerializable keySerializable = new KeySerializable(keyName, Constants.BOTHKEY, privateKeySerializable, publicKeySerializable);
 
                         boolean ret = HelperFunctions.writeKeySerializableSelf(keyName, Constants.EXTENSION_KEY, keySerializable);
 

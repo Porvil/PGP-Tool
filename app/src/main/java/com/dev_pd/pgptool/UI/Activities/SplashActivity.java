@@ -1,4 +1,4 @@
-package com.dev_pd.pgptool.UI;
+package com.dev_pd.pgptool.UI.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,8 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
 
-import com.dev_pd.pgptool.Constants;
-import com.dev_pd.pgptool.HomeActivity;
+import com.dev_pd.pgptool.Others.Constants;
 import com.dev_pd.pgptool.R;
 
 public class SplashActivity extends AppCompatActivity {

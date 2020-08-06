@@ -14,21 +14,21 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ViewKeysActivity"
+            android:name=".UI.Activities.ViewKeysActivity"
             android:label="@string/title_activity_view_keys"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".ManageKeysActivity"
+            android:name=".UI.Activities.ManageKeysActivity"
             android:launchMode="singleTask" />
         <activity
-            android:name=".DecryptActivity"
+            android:name=".UI.Activities.DecryptActivity"
             android:launchMode="singleTask" />
         <activity
-            android:name=".EncryptActivity"
+            android:name=".UI.Activities.EncryptActivity"
             android:launchMode="singleTask" />
         <activity
-            android:name=".HomeActivity"
+            android:name=".UI.Activities.HomeActivity"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,7 +36,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".UI.SplashActivity"
+            android:name=".UI.Activities.SplashActivity"
             android:launchMode="singleTask">
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
@@ -46,7 +46,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.dev_pd.pgptool.MyKeysAdapter"
+            android:authorities="com.dev_pd.pgptool.UI.Adapters.MyKeysAdapter"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

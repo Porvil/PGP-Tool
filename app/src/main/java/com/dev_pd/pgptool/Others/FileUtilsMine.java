@@ -1,4 +1,4 @@
-package com.dev_pd.pgptool.UI;
+package com.dev_pd.pgptool.Others;
 
 /*
 https://stackoverflow.com/questions/13209494/how-to-get-the-full-file-path-from-uri/60642994#answer-60642994

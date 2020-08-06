@@ -1,4 +1,4 @@
-package com.dev_pd.pgptool;
+package com.dev_pd.pgptool.UI.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,13 +17,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Cryptography.PrivateKeySerializable;
-import com.dev_pd.pgptool.UI.HelperFunctions;
+import com.dev_pd.pgptool.Others.Constants;
+import com.dev_pd.pgptool.Others.HelperFunctions;
+import com.dev_pd.pgptool.R;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.util.ArrayList;
 
-class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
+public class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
 
     private View parentView;
     private Context context;
@@ -39,11 +41,11 @@ class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHolder> {
         }
     }
 
-    public MyKeysAdapter(Context context, ArrayList<KeySerializable> keySerializables, ArrayList<String> keysPath, View view) {
+    public MyKeysAdapter(Context context, ArrayList<KeySerializable> keySerializables, ArrayList<String> keysPath, View parentView) {
         this.context = context;
         this.keysPath = keysPath;
         this.keySerializables = keySerializables;
-        this.parentView = view;
+        this.parentView = parentView;
     }
 
     @Override

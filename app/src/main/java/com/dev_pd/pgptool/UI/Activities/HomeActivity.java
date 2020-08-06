@@ -1,4 +1,4 @@
-package com.dev_pd.pgptool;
+package com.dev_pd.pgptool.UI.Activities;
 
 import android.Manifest;
 import android.app.Activity;
@@ -14,15 +14,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
-import com.dev_pd.pgptool.UI.FileUtilsMine;
-import com.dev_pd.pgptool.UI.HelperFunctions;
+import com.dev_pd.pgptool.Others.Constants;
+import com.dev_pd.pgptool.Others.FileUtilsMine;
+import com.dev_pd.pgptool.Others.HelperFunctions;
+import com.dev_pd.pgptool.R;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private String[] PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+    private String[] PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE};
 
     private Button btn_encrypt;
     private Button btn_decrypt;
@@ -31,7 +34,7 @@ public class HomeActivity extends AppCompatActivity {
     private Button btn_viewKeys;
     private View view;
 
-    private int reqAgain = 0;
+    private final int REQUEST_CODE_OTHERS_KEY = 4000;
     private final int PERMISSION_ALL = 1;
 
     @Override
@@ -76,16 +79,11 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                //Select Key to add
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
 
-                // Optionally, specify a URI for the file that should appear in the
-                // system file picker when it loads.
-//                intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
-
-                startActivityForResult(intent, 5000);
+                startActivityForResult(intent, REQUEST_CODE_OTHERS_KEY);
             }
         });
 
@@ -100,29 +98,21 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode,
-                                 Intent resultData) {
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         super.onActivityResult(requestCode, resultCode, resultData);
-        if (requestCode == 5000 && resultCode == Activity.RESULT_OK) {
-            // The result data contains a URI for the document or directory that
-            // the user selected.
-            Uri uri = null;
+        if (requestCode == REQUEST_CODE_OTHERS_KEY && resultCode == Activity.RESULT_OK) {
+            Uri uri;
             if (resultData != null) {
                 uri = resultData.getData();
-//                File file = new File(uri)
                 System.out.println(uri.getPath());
 
                 FileUtilsMine fileUtilsMine = new FileUtilsMine(this);
                 String path = fileUtilsMine.getPath(uri);
-//                gpath = path;
-
                 File file = new File(path);
                 if(!HelperFunctions.isValidKeyFile(file.getName())){
-                    System.out.println("not a key file");
+                    Snackbar.make(view, "The Selected File is not Key File", Snackbar.LENGTH_SHORT).show();
                     return;
                 }
-
-                System.out.println(path);
 
                 KeySerializable keySerializable = HelperFunctions.readKey(path);
                 if(keySerializable != null) {
@@ -130,13 +120,12 @@ public class HomeActivity extends AppCompatActivity {
                         HelperFunctions.writeKeySerializableOther(keySerializable.getKeyName(), Constants.EXTENSION_KEY, keySerializable);
                     }
                     else {
-                        System.out.println("Not a public key");
+                        Snackbar.make(view, "The Selected File is not a Public Key File", Snackbar.LENGTH_SHORT).show();
                     }
                 }
                 else {
-                    System.out.println("NUll key");
+                    Snackbar.make(view, "The Key is NULL", Snackbar.LENGTH_SHORT).show();
                 }
-
             }
         }
     }
@@ -170,16 +159,16 @@ public class HomeActivity extends AppCompatActivity {
                             Snackbar.LENGTH_SHORT).show();
                 }
                 else {
-                    if(reqAgain == 0){
-                        Snackbar.make(view, "Use External Storage Permission is Required for app to work correctly.",
-                                Snackbar.LENGTH_LONG).show();
-                        checkPermissions();
-                        reqAgain++;
-                    }
-                    else {
-                        Snackbar.make(view, "Without permissions app wont work correctly.",
-                                Snackbar.LENGTH_LONG).show();
-                    }
+                    final Snackbar snackbar = Snackbar.make(view, "App may not work properly.",
+                            Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setAction("Give Permissions", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            checkPermissions();
+                            snackbar.dismiss();
+                        }
+                    });
+                    snackbar.show();
                 }
                 break;
             default:

@@ -1,4 +1,4 @@
-package com.dev_pd.pgptool;
+package com.dev_pd.pgptool.UI.Fragments;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -11,16 +11,19 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
-import com.dev_pd.pgptool.UI.HelperFunctions;
+import com.dev_pd.pgptool.Others.Constants;
+import com.dev_pd.pgptool.Others.HelperFunctions;
+import com.dev_pd.pgptool.R;
+import com.dev_pd.pgptool.UI.Adapters.MyKeysAdapter;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -84,6 +87,7 @@ public class MyKeysFragment extends Fragment implements SwipeRefreshLayout.OnRef
         // specify an adapter (see also next example)
         mAdapter = new MyKeysAdapter(context, keySerializables, keysPath, view);
         recyclerView.setAdapter(mAdapter);
+        recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
 
 //        LoadMyKeysTask loadMyKeysTask = new LoadMyKeysTask(context);
 //        loadMyKeysTask.execute();
