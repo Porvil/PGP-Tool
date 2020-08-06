@@ -7,12 +7,44 @@
     android:orientation="vertical"
     tools:context=".UI.Activities.ManageKeysActivity">
 
-    <Spinner
-        android:id="@+id/spinner_keySize"
+    <RadioGroup
+        android:id="@+id/rg_keySize"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:entries="@array/keysize_array" />
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_1024"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:text="1024"
+            android:textSize="28sp" />
+
+        <RadioButton
+            android:id="@+id/rb_2048"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:text="2048"
+            android:textSize="28sp" />
+
+        <RadioButton
+            android:id="@+id/rb_4096"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:text="4096"
+            android:textSize="28sp" />
+    </RadioGroup>
 
     <EditText
         android:layout_width="match_parent"

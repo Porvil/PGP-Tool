@@ -1,11 +1,15 @@
 package com.dev_pd.pgptool.UI.Activities;
 
 import android.app.ProgressDialog;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -25,7 +29,11 @@ import java.util.concurrent.Executors;
 
 public class ManageKeysActivity extends AppCompatActivity {
 
-    private Spinner spinner_keySize;
+    private RadioGroup rg_keySize;
+    private RadioButton rb_1024;
+    private RadioButton rb_2048;
+    private RadioButton rb_4096;
+
     private EditText et_manageKeysOwner;
     private EditText et_manageKeysKeyName;
     private EditText et_manageKeysPSWD;
@@ -39,7 +47,10 @@ public class ManageKeysActivity extends AppCompatActivity {
 
         final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-        spinner_keySize = findViewById(R.id.spinner_keySize);
+        rg_keySize = findViewById(R.id.rg_keySize);
+        rb_1024 = findViewById(R.id.rb_1024);
+        rb_2048 = findViewById(R.id.rb_2048);
+        rb_4096 = findViewById(R.id.rb_4096);
 
         et_manageKeysOwner = findViewById(R.id.et_manageKeysOwner);
         et_manageKeysKeyName = findViewById(R.id.et_manageKeysKeyName);
@@ -63,12 +74,28 @@ public class ManageKeysActivity extends AppCompatActivity {
             }
         };
 
+        ColorStateList colorStateList = new ColorStateList(
+                new int[][]{
+                        new int[]{-android.R.attr.state_checked}, //disabled
+                        new int[]{android.R.attr.state_checked} //enabled
+                },
+                new int[] {
+                        Color.BLACK, //disabled
+                        Color.BLUE //enabled
+                }
+        );
+
+        rb_1024.setTextColor(colorStateList);
+        rb_2048.setTextColor(colorStateList);
+        rb_4096.setTextColor(colorStateList);
 
         btn_manageKeysCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                final int keySize = Integer.parseInt((String)spinner_keySize.getSelectedItem());
+                int checkedRadioButtonId = rg_keySize.getCheckedRadioButtonId();
+                RadioButton curRadioButton = findViewById(checkedRadioButtonId);
+                final int keySize = Integer.parseInt(curRadioButton.getText().toString());
                 final String owner = et_manageKeysOwner.getText().toString().trim();
                 final String keyName = et_manageKeysKeyName.getText().toString().trim();
                 final String password = et_manageKeysPSWD.getText().toString();
