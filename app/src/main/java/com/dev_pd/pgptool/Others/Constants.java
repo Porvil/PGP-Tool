@@ -15,6 +15,7 @@ public class Constants {
     public static final String BOTHKEY = "BOTH";
     public static final String AUTHORITY = "com.dev_pd.pgptool.UI.Adapters.MyKeysAdapter";
 
+    public static final int PASSWORD_LENGTH = 4;
     public static final int SPLASH_TIME = 500;
 
 }

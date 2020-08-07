@@ -5,74 +5,94 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/linear_manageKeys"
     tools:context=".UI.Activities.ManageKeysActivity">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="60dp"/>
+
+    <TextView
+        style="@style/AppTheme.TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="32sp"
+        android:layout_margin="10dp"
+        android:text="Select Key Size"/>
 
     <RadioGroup
         android:id="@+id/rg_keySize"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/rb_1024"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:button="@null"
             android:checked="true"
             android:gravity="center"
             android:text="1024"
+            android:paddingHorizontal="10dp"
             android:textSize="28sp" />
 
         <RadioButton
             android:id="@+id/rb_2048"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:button="@null"
             android:gravity="center"
             android:text="2048"
+            android:paddingHorizontal="10dp"
             android:textSize="28sp" />
 
         <RadioButton
             android:id="@+id/rb_4096"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:button="@null"
             android:gravity="center"
+            android:paddingHorizontal="10dp"
             android:text="4096"
             android:textSize="28sp" />
     </RadioGroup>
 
-    <EditText
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:hint="Enter Owner Name"
-        android:id="@+id/et_manageKeysOwner"/>
+        android:layout_height="20dp"/>
 
     <EditText
+        android:id="@+id/et_manageKeysOwner"
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:hint="Enter Key Name"
-        android:id="@+id/et_manageKeysKeyName"/>
+        android:layout_height="wrap_content"
+        android:hint="Owner Name" />
+
+    <EditText
+        android:id="@+id/et_manageKeysKeyName"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Key Name" />
 
 
     <EditText
+        android:id="@+id/et_manageKeysPSWD"
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:hint="Enter Password"
-        android:inputType="textPassword"
-        android:id="@+id/et_manageKeysPSWD"/>
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:inputType="textPassword" />
 
     <Button
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_margin="10dp"
+        android:textSize="24sp"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="100dp"
         android:text="Create Key"
         android:id="@+id/btn_manageKeysCreate"/>
 

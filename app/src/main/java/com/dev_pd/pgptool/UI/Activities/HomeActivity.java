@@ -118,6 +118,7 @@ public class HomeActivity extends AppCompatActivity {
                 if(keySerializable != null) {
                     if (keySerializable.getKeyType().equals(Constants.PUBLICKEY)) {
                         HelperFunctions.writeKeySerializableOther(keySerializable.getKeyName(), Constants.EXTENSION_KEY, keySerializable);
+                        Snackbar.make(view, "The Key is successfully added.", Snackbar.LENGTH_SHORT).show();
                     }
                     else {
                         Snackbar.make(view, "The Selected File is not a Public Key File", Snackbar.LENGTH_SHORT).show();
