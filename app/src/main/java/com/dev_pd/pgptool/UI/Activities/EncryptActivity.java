@@ -25,8 +25,10 @@ import com.dev_pd.pgptool.Others.Constants;
 import com.dev_pd.pgptool.Others.FileUtilsMine;
 import com.dev_pd.pgptool.Others.HelperFunctions;
 import com.dev_pd.pgptool.R;
+import com.dev_pd.pgptool.UI.Fragments.MyKeysFragment;
 
 import java.io.File;
+import java.security.Key;
 import java.security.PrivateKey;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -35,6 +37,7 @@ public class EncryptActivity extends AppCompatActivity {
 
     private Button btn_encSelectFile;
     private Button btn_encChooseMyKey;
+    private Button btn_encChooseMyKeyBrowse;
     private Button btn_encChooseOthersKey;
     private Button btn_encryptFile;
     private EditText et_setEncFileName;
@@ -57,6 +60,7 @@ public class EncryptActivity extends AppCompatActivity {
 
         btn_encSelectFile = findViewById(R.id.btn_encSelectFile);
         btn_encChooseMyKey = findViewById(R.id.btn_encChooseMyKey);
+        btn_encChooseMyKeyBrowse = findViewById(R.id.btn_encChooseMyKeyBrowse);
         btn_encChooseOthersKey = findViewById(R.id.btn_encChooseOthersKey);
         btn_encryptFile = findViewById(R.id.btn_encryptFile);
         et_setEncFileName = findViewById(R.id.et_setEncFileName);
@@ -102,6 +106,17 @@ public class EncryptActivity extends AppCompatActivity {
         btn_encChooseMyKey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                int LAUNCH_SECOND_ACTIVITY = 1;
+                Intent i = new Intent(EncryptActivity.this, SelectMyKeyActivity.class);
+                startActivityForResult(i, LAUNCH_SECOND_ACTIVITY);
+            }
+        });
+
+        btn_encChooseMyKeyBrowse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
                 //Select Key to add
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -359,6 +374,19 @@ public class EncryptActivity extends AppCompatActivity {
 
             }
         }
+        else if (requestCode == 1) {
+            if(resultCode == Activity.RESULT_OK){
+                String result = resultData.getStringExtra("result");
+                KeySerializable keySerializable = (KeySerializable) resultData.getSerializableExtra("key");
+                System.out.println("==============" + result);
+                System.out.println("==============" + keySerializable);
+                myKey = keySerializable;
+                tv_enc_myKey.setText(myKey.getKeyName());
+            }
+        }
     }
+
+
+
 
 }

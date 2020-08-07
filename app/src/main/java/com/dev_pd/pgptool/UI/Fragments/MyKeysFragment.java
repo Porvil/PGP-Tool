@@ -85,7 +85,7 @@ public class MyKeysFragment extends Fragment implements SwipeRefreshLayout.OnRef
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new MyKeysAdapter(context, keySerializables, keysPath, view);
+        mAdapter = new MyKeysAdapter(context, keySerializables, keysPath, view, Constants.TYPE_VIEW);
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
 
