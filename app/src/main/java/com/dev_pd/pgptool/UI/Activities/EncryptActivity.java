@@ -25,10 +25,9 @@ import com.dev_pd.pgptool.Others.Constants;
 import com.dev_pd.pgptool.Others.FileUtilsMine;
 import com.dev_pd.pgptool.Others.HelperFunctions;
 import com.dev_pd.pgptool.R;
-import com.dev_pd.pgptool.UI.Fragments.MyKeysFragment;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
-import java.security.Key;
 import java.security.PrivateKey;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,8 +36,13 @@ public class EncryptActivity extends AppCompatActivity {
 
     private Button btn_encSelectFile;
     private Button btn_encChooseMyKey;
+    private Button btn_enc_myKeyView;
+    private Button btn_enc_myKeyUnselect;
     private Button btn_encChooseMyKeyBrowse;
+    private Button btn_enc_otherKeyUnselect;
+    private Button btn_enc_otherKeyView;
     private Button btn_encChooseOthersKey;
+    private Button btn_encChooseOthersKeyBrowse;
     private Button btn_encryptFile;
     private EditText et_setEncFileName;
     private TextView tv_enc_FileName;
@@ -51,7 +55,7 @@ public class EncryptActivity extends AppCompatActivity {
     private KeySerializable myKey;
     private KeySerializable othersKey;
     private ProgressDialog show;
-    ExecutorService executorService;
+    private ExecutorService executorService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +63,14 @@ public class EncryptActivity extends AppCompatActivity {
         setContentView(R.layout.activity_encrypt);
 
         btn_encSelectFile = findViewById(R.id.btn_encSelectFile);
+        btn_enc_myKeyUnselect = findViewById(R.id.btn_enc_myKeyUnselect);
+        btn_enc_myKeyView = findViewById(R.id.btn_enc_myKeyView);
         btn_encChooseMyKey = findViewById(R.id.btn_encChooseMyKey);
         btn_encChooseMyKeyBrowse = findViewById(R.id.btn_encChooseMyKeyBrowse);
+        btn_enc_otherKeyUnselect = findViewById(R.id.btn_enc_otherKeyUnselect);
+        btn_enc_otherKeyView = findViewById(R.id.btn_enc_otherKeyView);
         btn_encChooseOthersKey = findViewById(R.id.btn_encChooseOthersKey);
+        btn_encChooseOthersKeyBrowse = findViewById(R.id.btn_encChooseOthersKeyBrowse);
         btn_encryptFile = findViewById(R.id.btn_encryptFile);
         et_setEncFileName = findViewById(R.id.et_setEncFileName);
         tv_enc_FileName = findViewById(R.id.tv_enc_FileName);
@@ -86,19 +95,29 @@ public class EncryptActivity extends AppCompatActivity {
             }
         };
 
+        btn_enc_myKeyUnselect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myKey = null;
+                tv_enc_myKey.setText("No Key Selected");
+            }
+        });
+
+        btn_enc_otherKeyUnselect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                othersKey = null;
+                tv_enc_othersKey.setText("No Other Key Selected");
+            }
+        });
+
 
         btn_encSelectFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Select Key to add
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
-
-                // Optionally, specify a URI for the file that should appear in the
-                // system file picker when it loads.
-//                intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
-
                 startActivityForResult(intent, 5000);
             }
         });
@@ -106,28 +125,18 @@ public class EncryptActivity extends AppCompatActivity {
         btn_encChooseMyKey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                int LAUNCH_SECOND_ACTIVITY = 1;
                 Intent i = new Intent(EncryptActivity.this, SelectMyKeyActivity.class);
-                startActivityForResult(i, LAUNCH_SECOND_ACTIVITY);
+                i.putExtra(Constants.KEY_SELECT_TYPE, Constants.KEY_SELECT_SELF);
+                startActivityForResult(i, 5003);
             }
         });
 
         btn_encChooseMyKeyBrowse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //Select Key to add
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
-
-                // Optionally, specify a URI for the file that should appear in the
-                // system file picker when it loads.
-//                Uri pickerInitialUri = Uri.parse(HelperFunctions.getPGPDirectoryPath() + Constants.SELF_DIRECTORY);
-//                System.out.println(pickerInitialUri.getPath());
-//                intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
-
                 startActivityForResult(intent, 5001);
             }
         });
@@ -135,15 +144,18 @@ public class EncryptActivity extends AppCompatActivity {
         btn_encChooseOthersKey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Select Key to add
+                Intent i = new Intent(EncryptActivity.this, SelectMyKeyActivity.class);
+                i.putExtra(Constants.KEY_SELECT_TYPE, Constants.KEY_SELECT_OTHERS);
+                startActivityForResult(i, 5003);
+            }
+        });
+
+        btn_encChooseOthersKeyBrowse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
-
-                // Optionally, specify a URI for the file that should appear in the
-                // system file picker when it loads.
-//                intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
-
                 startActivityForResult(intent, 5002);
             }
         });
@@ -187,6 +199,74 @@ public class EncryptActivity extends AppCompatActivity {
 
                 executorService.execute(runnable);
 
+            }
+        });
+
+        btn_enc_myKeyView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (myKey != null) {
+                    View dialView = LayoutInflater.from(EncryptActivity.this).inflate(R.layout.item_keys_for_select, null);
+                    TextView tv_myKeysOwner = dialView.findViewById(R.id.tv_keysForSelectOwner);
+                    final TextView tv_myKeysKeyName = dialView.findViewById(R.id.tv_keysForSelectKeyName);
+                    TextView tv_myKeysKeySize = dialView.findViewById(R.id.tv_keysForSelectKeySize);
+
+                    if (myKey != null) {
+                        tv_myKeysOwner.setText(myKey.getOwner());
+                        tv_myKeysKeyName.setText(myKey.getKeyName());
+                        tv_myKeysKeySize.setText(myKey.getKeySize() + "");
+                    }
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(EncryptActivity.this);
+                    builder.setView(dialView);
+                    builder.setTitle("Key Details");
+                    builder.setNegativeButton("Back", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+                }
+                else{
+                    View view = findViewById(R.id.linear_encMyKeyContainer);
+                    Snackbar.make(view, "No Key Selected", Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        btn_enc_otherKeyView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (othersKey != null) {
+                    View dialView = LayoutInflater.from(EncryptActivity.this).inflate(R.layout.item_keys_for_select, null);
+                    TextView tv_myKeysOwner = dialView.findViewById(R.id.tv_keysForSelectOwner);
+                    final TextView tv_myKeysKeyName = dialView.findViewById(R.id.tv_keysForSelectKeyName);
+                    TextView tv_myKeysKeySize = dialView.findViewById(R.id.tv_keysForSelectKeySize);
+
+                    if (othersKey != null) {
+                        tv_myKeysOwner.setText(othersKey.getOwner());
+                        tv_myKeysKeyName.setText(othersKey.getKeyName());
+                        tv_myKeysKeySize.setText(othersKey.getKeySize() + "");
+                    }
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(EncryptActivity.this);
+                    builder.setView(dialView);
+                    builder.setTitle("Key Details");
+                    builder.setNegativeButton("Back", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+                }
+                else{
+                    View view = findViewById(R.id.linear_encOthersKeyContainer);
+                    Snackbar.make(view, "No Other's Key Selected", Snackbar.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -242,27 +322,22 @@ public class EncryptActivity extends AppCompatActivity {
                         View view = LayoutInflater.from(EncryptActivity.this).inflate(R.layout.dialog_enterpassword, null);
 
                         final EditText et_enterpswd = view.findViewById(R.id.et_enterpswd);
-                        final ProgressBar progressBar = view.findViewById(R.id.progressBar);
 //                        progressBar.setVisibility(View.INVISIBLE);
                         final Button btn_confirmpswd = view.findViewById(R.id.btn_confirmpswd);
+                        final Button btn_cancelpswd = view.findViewById(R.id.btn_cancelpswd);
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(EncryptActivity.this);
                         builder.setView(view);
                         builder.setTitle("Enter Password");
-                        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        });
-                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(EncryptActivity.this, "canceled", Toast.LENGTH_SHORT).show();
-                            }
-                        });
                         final AlertDialog dialog = builder.create();
                         dialog.show();
+
+                        btn_cancelpswd.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
 
                         btn_confirmpswd.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -273,9 +348,6 @@ public class EncryptActivity extends AppCompatActivity {
                                     et_enterpswd.setError("Cant be empty");
                                     return;
                                 }
-
-//                                ProgressDialog show1 = ProgressDialog.show(EncryptActivity.this, "Encrypting. Please wait...",
-//                                        "Could Take several minutes if selected file is large.", true);
 
                                 final Runnable wrongpswd = new Runnable() {
                                     @Override
@@ -311,23 +383,8 @@ public class EncryptActivity extends AppCompatActivity {
                                     }
                                 });
 
-//                                PrivateKey privateKey = keySerializable.getPrivateKeySerializable().getPrivateKey(pswd);
-//
-//                                if(privateKey == null){
-//                                    et_enterpswd.setError("Wrong password");
-//
-//                                    return;
-//                                }
-//
-//                                myKey = keySerializable;
-//                                tv_enc_myKey.setText(myKey.getKeyName());
-//                                password = pswd;
-//                                dialog.dismiss();
                             }
                         });
-
-
-//                        HelperFunctions.writeFileExternalStorageOther(keySerializable.getKeyName(), Constants.EXTENSION_KEY, keySerializable);
                     }
                     else {
                         System.out.println("Not a Both key");
@@ -362,7 +419,6 @@ public class EncryptActivity extends AppCompatActivity {
                     if (keySerializable.getKeyType().equals(Constants.PUBLICKEY)) {
                         othersKey = keySerializable;
                         tv_enc_othersKey.setText(othersKey.getKeyName());
-//                        HelperFunctions.writeFileExternalStorageOther(keySerializable.getKeyName(), Constants.EXTENSION_KEY, keySerializable);
                     }
                     else {
                         System.out.println("Not a public key");
@@ -374,14 +430,96 @@ public class EncryptActivity extends AppCompatActivity {
 
             }
         }
-        else if (requestCode == 1) {
+        else if (requestCode == 5003) {
             if(resultCode == Activity.RESULT_OK){
+                int type = resultData.getIntExtra(Constants.KEY_SELECT_TYPE, Constants.KEY_SELECT_SELF);
                 String result = resultData.getStringExtra("result");
-                KeySerializable keySerializable = (KeySerializable) resultData.getSerializableExtra("key");
+                final KeySerializable keySerializable = (KeySerializable) resultData.getSerializableExtra("key");
                 System.out.println("==============" + result);
                 System.out.println("==============" + keySerializable);
-                myKey = keySerializable;
-                tv_enc_myKey.setText(myKey.getKeyName());
+
+                if(type == Constants.KEY_SELECT_SELF){
+                    if (keySerializable.getKeyType().equals(Constants.BOTHKEY)) {
+
+                        View view = LayoutInflater.from(EncryptActivity.this).inflate(R.layout.dialog_enterpassword, null);
+
+                        final EditText et_enterpswd = view.findViewById(R.id.et_enterpswd);
+//                        progressBar.setVisibility(View.INVISIBLE);
+                        final Button btn_confirmpswd = view.findViewById(R.id.btn_confirmpswd);
+                        final Button btn_cancelpswd = view.findViewById(R.id.btn_cancelpswd);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(EncryptActivity.this);
+                        builder.setView(view);
+                        builder.setTitle("Enter Password");
+
+                        final AlertDialog dialog = builder.create();
+                        dialog.show();
+
+                        btn_cancelpswd.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        btn_confirmpswd.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                final String pswd = et_enterpswd.getText().toString();
+
+                                if(TextUtils.isEmpty(pswd)){
+                                    et_enterpswd.setError("Cant be empty");
+                                    return;
+                                }
+
+                                final Runnable wrongpswd = new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        et_enterpswd.setError("Wrong password");
+                                    }
+                                };
+
+                                final Runnable correctpswd = new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        dialog.dismiss();
+                                    }
+                                };
+
+                                executorService.execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        PrivateKey privateKey = keySerializable.getPrivateKeySerializable().getPrivateKey(pswd);
+
+                                        if(privateKey == null){
+                                            //error here
+                                            runOnUiThread(wrongpswd);
+                                            return;
+                                        }
+
+                                        myKey = keySerializable;
+                                        tv_enc_myKey.setText(myKey.getKeyName());
+                                        password = pswd;
+                                        runOnUiThread(correctpswd);
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    else {
+                        System.out.println("Not a Both key");
+                    }
+                }
+                else{
+                    if (keySerializable.getKeyType().equals(Constants.PUBLICKEY)) {
+                        othersKey = keySerializable;
+                        tv_enc_othersKey.setText(othersKey.getKeyName());
+                    }
+                    else {
+                        System.out.println("Not a public key");
+                    }
+                }
+
             }
         }
     }

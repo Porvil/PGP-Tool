@@ -1,11 +1,9 @@
 package com.dev_pd.pgptool.UI.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,7 +20,7 @@ import com.dev_pd.pgptool.Others.Constants;
 import com.dev_pd.pgptool.Others.HelperFunctions;
 import com.dev_pd.pgptool.R;
 import com.dev_pd.pgptool.UI.Adapters.MyKeysAdapter;
-import com.dev_pd.pgptool.UI.Fragments.MyKeysFragment;
+import com.dev_pd.pgptool.UI.Adapters.OthersKeyAdapter;
 import com.dev_pd.pgptool.UI.OnKeySelectListener;
 
 import java.io.File;
@@ -42,15 +40,23 @@ public class SelectMyKeyActivity extends AppCompatActivity implements OnKeySelec
     private ArrayList<String> keysPath;
 
     private ExecutorService executorService;
-    private Runnable runnable;
+    private Runnable runnableMyKeys;
+    private Runnable runnableOtherKeys;
 
     private String finalKeyPath;
     private KeySerializable finalKey;
+
+    private int keyViewType = Constants.KEY_SELECT_SELF;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_my_key);
+
+        Intent intent = getIntent();
+        if(intent != null){
+            keyViewType = intent.getIntExtra(Constants.KEY_SELECT_TYPE, Constants.KEY_SELECT_SELF);
+        }
 
 
         view = findViewById(R.id.linear_selectMyKey);
@@ -74,18 +80,22 @@ public class SelectMyKeyActivity extends AppCompatActivity implements OnKeySelec
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new MyKeysAdapter(context, keySerializables, keysPath, view, Constants.TYPE_SELECT, this);
+        if(keyViewType == Constants.KEY_SELECT_SELF)
+            mAdapter = new MyKeysAdapter(context, keySerializables, keysPath, view, Constants.TYPE_SELECT, this);
+        else
+            mAdapter = new OthersKeyAdapter(context, keySerializables, keysPath, view, Constants.TYPE_SELECT, this);
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
 
 //        LoadMyKeysTask loadMyKeysTask = new LoadMyKeysTask(context);
 //        loadMyKeysTask.execute();
 
-        Button button = findViewById(R.id.button);
+        Button button = findViewById(R.id.btn_selectKeyReturn);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent returnIntent = new Intent();
+                returnIntent.putExtra(Constants.KEY_SELECT_TYPE, keyViewType);
                 returnIntent.putExtra("result", finalKeyPath);
                 returnIntent.putExtra("key", finalKey);
                 System.out.println("-----------" + finalKeyPath);
@@ -94,8 +104,8 @@ public class SelectMyKeyActivity extends AppCompatActivity implements OnKeySelec
             }
         });
 
-        textView = findViewById(R.id.textView);
-        final MyKeysAdapter my = (MyKeysAdapter) mAdapter;
+        textView = findViewById(R.id.tv_selectKeySelectedKey);
+//        final MyKeysAdapter my = (MyKeysAdapter) mAdapter;
 
         final Runnable refresh = new Runnable() {
             @Override
@@ -106,7 +116,7 @@ public class SelectMyKeyActivity extends AppCompatActivity implements OnKeySelec
         };
 
 
-        runnable = new Runnable() {
+        runnableMyKeys = new Runnable() {
             @Override
             public void run() {
                 System.out.println("----------------------------------------------------------");
@@ -144,14 +154,55 @@ public class SelectMyKeyActivity extends AppCompatActivity implements OnKeySelec
             }
         };
 
-        executorService.execute(runnable);
+
+        runnableOtherKeys = new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("----------------------------------------------------------");
+                String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.OTHERS_DIRECTORY;
+                File directory = new File(path);
+                File[] files = directory.listFiles();
+
+                keysPath.clear();
+                keySerializables.clear();
+                if(files != null && files.length > 0) {
+                    for (File curFile : files) {
+                        String curPath = curFile.getAbsolutePath();
+                        System.out.println(curFile.getName());
+                        String name = curFile.getName();
+                        if (HelperFunctions.isValidKeyFile(name)) {
+                            KeySerializable keySerializable = HelperFunctions.readKey(curPath);
+                            System.out.println(keySerializable);
+                            if (!keySerializables.contains(keySerializable)) {
+                                String keyNameInsideFile = keySerializable.getKeyName() + Constants.EXTENSION_KEY;
+                                if (keyNameInsideFile.equals(curFile.getName())) {
+                                    keySerializables.add(keySerializable);
+                                    keysPath.add(curPath);
+                                }
+                            }
+                            System.out.println(keySerializable != null);
+                        }
+                        else {
+                            System.out.println("shit : " + name);
+                        }
+
+                    }
+                }
+
+                runOnUiThread(refresh);
+            }
+        };
+
+        if(keyViewType == Constants.KEY_SELECT_SELF)
+            executorService.execute(runnableMyKeys);
+        else
+            executorService.execute(runnableOtherKeys);
 
 
     }
 
     @Override
     public void onKeySelect(KeySerializable keySerializable, String keyPath) {
-        Toast.makeText(this, keySerializable.toString(), Toast.LENGTH_LONG).show();
         textView.setText(keyPath);
         finalKey = keySerializable;
         finalKeyPath = keyPath;

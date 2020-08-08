@@ -15,22 +15,34 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/tv_enc_FileName"
+            style="@style/AppTheme.TextView"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_margin="10dp"
             android:layout_weight="3"
-            android:id="@+id/tv_enc_FileName"
-            android:text="No File Selected" />
+            android:text="No File Selected"
+            android:gravity="center"
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/btn_encSelectFile"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Select File" />
+            android:layout_margin="10dp"
+            android:layout_weight="2"
+            android:text="Select File"
+            android:textSize="18sp" />
 
 
     </LinearLayout>
 
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="?android:attr/listDivider" />
 
     <LinearLayout
         android:id="@+id/linear_encMyKeyContainer"
@@ -39,40 +51,89 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:id="@+id/tv_enc_myKey"
-            android:text="No Key Selected" />
+            android:orientation="vertical"
+            android:layout_margin="10dp"
+            android:layout_weight="3">
+
+            <TextView
+                android:id="@+id/tv_enc_myKey"
+                style="@style/AppTheme.TextView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="No Key Selected"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+
+                <Button
+                    android:layout_gravity="center"
+                    android:layout_width="0dp"
+                    android:id="@+id/btn_enc_myKeyUnselect"
+                    style="@style/AppTheme.Button"
+                    android:text="Unselect"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:layout_gravity="center"
+                    android:layout_width="0dp"
+                    android:id="@+id/btn_enc_myKeyView"
+                    style="@style/AppTheme.Button"
+                    android:text="View Key"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_weight="2"
             android:orientation="vertical">
 
 
             <Button
                 android:id="@+id/btn_encChooseMyKey"
+                style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="Select Your Key" />
+                android:text="Select Key"
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/btn_encChooseMyKeyBrowse"
-                android:layout_width="wrap_content"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="Browse Key and selevct manually" />
+                android:text="Browse Key"
+                android:textSize="18sp" />
 
         </LinearLayout>
 
 
-
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="?android:attr/listDivider" />
 
     <LinearLayout
         android:id="@+id/linear_encOthersKeyContainer"
@@ -81,22 +142,85 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:id="@+id/tv_enc_othersKey"
-            android:text="No Other Key Selected" />
+            android:orientation="vertical"
+            android:layout_margin="10dp"
+            android:layout_weight="3">
 
-        <Button
-            android:id="@+id/btn_encChooseOthersKey"
+            <TextView
+                android:id="@+id/tv_enc_othersKey"
+                style="@style/AppTheme.TextView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="No Other Key Selected"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+
+                <Button
+                    android:layout_gravity="center"
+                    android:layout_width="0dp"
+                    android:id="@+id/btn_enc_otherKeyUnselect"
+                    style="@style/AppTheme.Button"
+                    android:text="Unselect"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:layout_gravity="center"
+                    android:layout_width="0dp"
+                    android:id="@+id/btn_enc_otherKeyView"
+                    style="@style/AppTheme.Button"
+                    android:text="View Key"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Select Other's Key" />
+            android:layout_margin="10dp"
+            android:layout_weight="2"
+            android:orientation="vertical">
 
+            <Button
+                android:id="@+id/btn_encChooseOthersKey"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="Select Other's Key"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btn_encChooseOthersKeyBrowse"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="Browse Other's Key"
+                android:textSize="18sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="?android:attr/listDivider" />
 
     <LinearLayout
         android:id="@+id/linear_encFileNameContainer"
@@ -109,13 +233,18 @@
             android:id="@+id/et_setEncFileName"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_margin="10dp"
             android:layout_weight="3"
-            android:inputType="text"
-            android:hint="Enter Encrypted FileName to save as" />
+            android:hint="Filename to save as"
+            android:inputType="text" />
 
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="?android:attr/listDivider" />
 
     <LinearLayout
         android:id="@+id/linear_encContainer"
@@ -126,10 +255,13 @@
 
         <Button
             android:id="@+id/btn_encryptFile"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_margin="10dp"
             android:layout_weight="1"
-            android:text="Encrypt" />
+            android:text="Encrypt"
+            android:textSize="28sp" />
 
     </LinearLayout>
 

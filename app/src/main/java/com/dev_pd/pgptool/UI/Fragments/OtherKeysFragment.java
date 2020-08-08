@@ -1,7 +1,6 @@
 package com.dev_pd.pgptool.UI.Fragments;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -56,8 +55,7 @@ public class OtherKeysFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_other_keys, container, false);
     }
 
@@ -74,17 +72,12 @@ public class OtherKeysFragment extends Fragment implements SwipeRefreshLayout.On
         swipeRefreshLayout = view.findViewById(R.id.srl_othersKeys);
         swipeRefreshLayout.setOnRefreshListener(OtherKeysFragment.this);
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
         recyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
         layoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
 
-        // specify an adapter (see also next example)
-        mAdapter = new OthersKeyAdapter(keySerializables, keysPath, context, view);
+        mAdapter = new OthersKeyAdapter(context, keySerializables, keysPath, view, Constants.TYPE_VIEW);
         recyclerView.setAdapter(mAdapter);
 
         final Runnable refresh = new Runnable() {
@@ -98,13 +91,13 @@ public class OtherKeysFragment extends Fragment implements SwipeRefreshLayout.On
         runnable = new Runnable() {
             @Override
             public void run() {
-                System.out.println("----------------------------------------------------------");
                 String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.OTHERS_DIRECTORY;
                 File directory = new File(path);
                 File[] files = directory.listFiles();
 
                 keysPath.clear();
                 keySerializables.clear();
+
                 if(files != null && files.length > 0) {
                     for (File curFile : files) {
                         String curPath = curFile.getAbsolutePath();
@@ -134,77 +127,11 @@ public class OtherKeysFragment extends Fragment implements SwipeRefreshLayout.On
 
         executorService.execute(runnable);
 
-
-//        LoadOthersKeysTask loadOthersKeysTask = new LoadOthersKeysTask(context);
-//        loadOthersKeysTask.execute();
-
     }
 
     @Override
     public void onRefresh() {
-//        LoadOthersKeysTask loadOthersKeysTask = new LoadOthersKeysTask(context);
-//        loadOthersKeysTask.execute();
-
         executorService.execute(runnable);
-
-    }
-
-    class LoadOthersKeysTask extends AsyncTask<Void, Integer, Void> {
-
-        Context context;
-
-        public LoadOthersKeysTask(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected Void doInBackground(Void... integers) {
-
-            System.out.println("----------------------------------------------------------");
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.OTHERS_DIRECTORY;
-            File directory = new File(path);
-            File[] files = directory.listFiles();
-
-            keysPath.clear();
-            keySerializables.clear();
-            if(files != null && files.length > 0) {
-                for (File curFile : files) {
-                    String curPath = curFile.getAbsolutePath();
-                    System.out.println(curFile.getName());
-                    String name = curFile.getName();
-                    if (HelperFunctions.isValidKeyFile(name)) {
-                        KeySerializable keySerializable = HelperFunctions.readKey(curPath);
-                        System.out.println(keySerializable);
-                        if (!keySerializables.contains(keySerializable)) {
-                            String keyNameInsideFile = keySerializable.getKeyName() + Constants.EXTENSION_KEY;
-                            if(keyNameInsideFile.equals(curFile.getName())) {
-                                keySerializables.add(keySerializable);
-                                keysPath.add(curPath);
-                            }
-                        }
-                        System.out.println(keySerializable != null);
-                    } else {
-                        System.out.println("shit : " + name);
-                    }
-
-                }
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(Void v) {
-            super.onPostExecute(v);
-            mAdapter.notifyDataSetChanged();
-            swipeRefreshLayout.setRefreshing(false);
-        }
-
     }
 
 }

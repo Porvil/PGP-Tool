@@ -14,7 +14,10 @@ public class Constants {
     public static final String PUBLICKEY = "PUBLIC";
     public static final String BOTHKEY = "BOTH";
     public static final String AUTHORITY = "com.dev_pd.pgptool.UI.Adapters.MyKeysAdapter";
+    public static final String KEY_SELECT_TYPE = "keySelectType";
 
+    public static final int KEY_SELECT_SELF = 0;
+    public static final int KEY_SELECT_OTHERS = 1;
     public static final int TYPE_SELECT = 0;
     public static final int TYPE_VIEW = 1;
     public static final int PASSWORD_LENGTH = 4;

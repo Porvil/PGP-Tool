@@ -22,6 +22,7 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:text="Key Owner"
+                android:textSize="18sp"
                 android:theme="@style/AppTheme.TextView" />
 
             <TextView
@@ -30,6 +31,7 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:text="Key Name"
+                android:textSize="18sp"
                 android:theme="@style/AppTheme.TextView" />
 
             <TextView
@@ -38,6 +40,7 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:text="Key Size"
+                android:textSize="18sp"
                 android:theme="@style/AppTheme.TextView" />
 
         </LinearLayout>
@@ -54,6 +57,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text=":"
+                android:textSize="18sp"
                 android:theme="@style/AppTheme.TextView" />
 
             <TextView
@@ -62,6 +66,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text=":"
+                android:textSize="18sp"
                 android:theme="@style/AppTheme.TextView" />
 
             <TextView
@@ -70,6 +75,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text=":"
+                android:textSize="18sp"
                 android:theme="@style/AppTheme.TextView" />
 
         </LinearLayout>
@@ -82,31 +88,34 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_myKeysOwner"
+                android:id="@+id/tv_keysForSelectOwner"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:theme="@style/AppTheme.TextView"
-                android:text="1" />
+                android:text="1"
+                android:textSize="18sp"
+                android:theme="@style/AppTheme.TextView" />
 
             <TextView
-                android:id="@+id/tv_myKeysKeyName"
+                android:id="@+id/tv_keysForSelectKeyName"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:theme="@style/AppTheme.TextView"
-                android:text="2" />
+                android:text="2"
+                android:textSize="18sp"
+                android:theme="@style/AppTheme.TextView" />
 
             <TextView
-                android:id="@+id/tv_myKeysKeySize"
+                android:id="@+id/tv_keysForSelectKeySize"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:theme="@style/AppTheme.TextView"
-                android:text="3" />
+                android:text="3"
+                android:textSize="18sp"
+                android:theme="@style/AppTheme.TextView" />
 
         </LinearLayout>
 

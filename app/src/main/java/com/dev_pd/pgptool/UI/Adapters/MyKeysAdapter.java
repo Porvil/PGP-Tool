@@ -35,7 +35,7 @@ public class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHold
     private ArrayList<KeySerializable> keySerializables;
     private ArrayList<String> keysPath;
     private int type;
-    OnKeySelectListener onKeySelectListener;
+    private OnKeySelectListener onKeySelectListener;
     public int selectedItem = 0;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -88,8 +88,7 @@ public class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHold
 
         if(type == Constants.TYPE_SELECT) {
             if (selectedItem == position) {
-                Toast.makeText(context, "Item@ " + position, Toast.LENGTH_LONG).show();
-                holder.view.setScaleX(0.95f);
+                holder.view.setScaleX(0.98f);
                 holder.view.setSelected(true);
                 onKeySelectListener.onKeySelect(keySerializables.get(position), keysPath.get(position));
             } else {
@@ -105,6 +104,18 @@ public class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHold
                     notifyItemChanged(selectedItem);
                 }
             });
+
+            TextView tv_myKeysOwner = holder.view.findViewById(R.id.tv_keysForSelectOwner);
+            final TextView tv_myKeysKeyName = holder.view.findViewById(R.id.tv_keysForSelectKeyName);
+            TextView tv_myKeysKeySize = holder.view.findViewById(R.id.tv_keysForSelectKeySize);
+
+            final KeySerializable keySerializable = keySerializables.get(position);
+            if(keySerializable != null) {
+                tv_myKeysOwner.setText(keySerializable.getOwner());
+                tv_myKeysKeyName.setText(keySerializable.getKeyName());
+                tv_myKeysKeySize.setText(keySerializable.getKeySize()+"");
+            }
+
 
         }
         else if(type == Constants.TYPE_VIEW){
