@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,7 +14,7 @@ import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Others.Constants;
 import com.dev_pd.pgptool.Others.HelperFunctions;
 import com.dev_pd.pgptool.R;
-import com.dev_pd.pgptool.UI.OnKeySelectListener;
+import com.dev_pd.pgptool.UI.Interfaces.OnKeySelectListener;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
@@ -58,8 +57,7 @@ public class OthersKeyAdapter extends RecyclerView.Adapter<OthersKeyAdapter.MyVi
     }
 
     @Override
-    public OthersKeyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
-                                                            int viewType) {
+    public OthersKeyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = null;
         if(type == Constants.TYPE_VIEW){
@@ -71,7 +69,6 @@ public class OthersKeyAdapter extends RecyclerView.Adapter<OthersKeyAdapter.MyVi
                     .inflate(R.layout.item_keys_for_select, parent, false);
         }
 
-
         MyViewHolder vh = new MyViewHolder(v);
         return vh;
     }
@@ -81,11 +78,12 @@ public class OthersKeyAdapter extends RecyclerView.Adapter<OthersKeyAdapter.MyVi
 
         if(type == Constants.TYPE_SELECT) {
             if (selectedItem == position) {
-                holder.view.setScaleX(0.98f);
+                holder.view.setScaleX(Constants.MIN_X);
                 holder.view.setSelected(true);
                 onKeySelectListener.onKeySelect(keySerializables.get(position), keysPath.get(position));
-            } else {
-                holder.view.setScaleX(1f);
+            }
+            else {
+                holder.view.setScaleX(Constants.MAX_X);
                 holder.view.setSelected(false);
             }
 
@@ -99,7 +97,7 @@ public class OthersKeyAdapter extends RecyclerView.Adapter<OthersKeyAdapter.MyVi
             });
 
             TextView tv_myKeysOwner = holder.view.findViewById(R.id.tv_keysForSelectOwner);
-            final TextView tv_myKeysKeyName = holder.view.findViewById(R.id.tv_keysForSelectKeyName);
+            TextView tv_myKeysKeyName = holder.view.findViewById(R.id.tv_keysForSelectKeyName);
             TextView tv_myKeysKeySize = holder.view.findViewById(R.id.tv_keysForSelectKeySize);
 
             final KeySerializable keySerializable = keySerializables.get(position);
@@ -108,7 +106,6 @@ public class OthersKeyAdapter extends RecyclerView.Adapter<OthersKeyAdapter.MyVi
                 tv_myKeysKeyName.setText(keySerializable.getKeyName());
                 tv_myKeysKeySize.setText(keySerializable.getKeySize()+"");
             }
-
 
         }
 
@@ -154,7 +151,7 @@ public class OthersKeyAdapter extends RecyclerView.Adapter<OthersKeyAdapter.MyVi
                             //Delete from directory
                             String tempPath = HelperFunctions.getExternalStoragePath() +
                                     Constants.OTHERS_DIRECTORY +
-                                    "/" +
+                                    Constants.SEPARATOR +
                                     keySerializable.getKeyName() +
                                     Constants.EXTENSION_KEY;
                             File file = new File(tempPath);
@@ -175,8 +172,6 @@ public class OthersKeyAdapter extends RecyclerView.Adapter<OthersKeyAdapter.MyVi
                             }
                         }
                     });
-
-
                 }
             });
         }

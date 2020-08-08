@@ -1,4 +1,4 @@
-package com.dev_pd.pgptool.UI;
+package com.dev_pd.pgptool.UI.Interfaces;
 
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
 

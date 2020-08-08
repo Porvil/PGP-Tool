@@ -2,7 +2,6 @@ package com.dev_pd.pgptool.UI.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
@@ -22,7 +20,7 @@ import com.dev_pd.pgptool.Cryptography.PrivateKeySerializable;
 import com.dev_pd.pgptool.Others.Constants;
 import com.dev_pd.pgptool.Others.HelperFunctions;
 import com.dev_pd.pgptool.R;
-import com.dev_pd.pgptool.UI.OnKeySelectListener;
+import com.dev_pd.pgptool.UI.Interfaces.OnKeySelectListener;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
@@ -65,9 +63,7 @@ public class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHold
     }
 
     @Override
-    public MyKeysAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
-                                                      int viewType) {
-        // create a new view
+    public MyKeysAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = null;
         if(type == Constants.TYPE_VIEW){
             v = LayoutInflater.from(parent.getContext())
@@ -78,7 +74,6 @@ public class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHold
                     .inflate(R.layout.item_keys_for_select, parent, false);
         }
 
-
         MyViewHolder vh = new MyViewHolder(v);
         return vh;
     }
@@ -88,11 +83,12 @@ public class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHold
 
         if(type == Constants.TYPE_SELECT) {
             if (selectedItem == position) {
-                holder.view.setScaleX(0.98f);
+                holder.view.setScaleX(Constants.MIN_X);
                 holder.view.setSelected(true);
                 onKeySelectListener.onKeySelect(keySerializables.get(position), keysPath.get(position));
-            } else {
-                holder.view.setScaleX(1f);
+            }
+            else {
+                holder.view.setScaleX(Constants.MAX_X);
                 holder.view.setSelected(false);
             }
 
@@ -116,11 +112,10 @@ public class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHold
                 tv_myKeysKeySize.setText(keySerializable.getKeySize()+"");
             }
 
-
         }
         else if(type == Constants.TYPE_VIEW){
             TextView tv_myKeysOwner = holder.view.findViewById(R.id.tv_myKeysOwner);
-            final TextView tv_myKeysKeyName = holder.view.findViewById(R.id.tv_myKeysKeyName);
+            TextView tv_myKeysKeyName = holder.view.findViewById(R.id.tv_myKeysKeyName);
             TextView tv_myKeysKeySize = holder.view.findViewById(R.id.tv_myKeysKeySize);
 
             Button btn_myKeysPrivateKey = holder.view.findViewById(R.id.btn_myKeysPrivateKey);
@@ -133,8 +128,6 @@ public class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHold
                 tv_myKeysKeyName.setText(keySerializable.getKeyName());
                 tv_myKeysKeySize.setText(keySerializable.getKeySize()+"");
             }
-
-
 
             btn_myKeysPublicKey.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -149,17 +142,21 @@ public class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHold
                             Constants.EXTENSION_KEY;
 
                     Boolean aBoolean = HelperFunctions.writeTempKeyForSharing(tempPath, publicKey);
+                    if(aBoolean) {
+                        final File file = new File(tempPath);
+                        System.out.println(file.getAbsolutePath());
 
-                    final File file = new File(tempPath);
-                    System.out.println(file.getAbsolutePath());
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        Uri uri = FileProvider.getUriForFile(context, Constants.AUTHORITY, file);
+                        intent.setDataAndType(uri, "*/*");
+                        intent.putExtra(Intent.EXTRA_STREAM, uri);
 
-                    Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    Uri uri = FileProvider.getUriForFile(context, Constants.AUTHORITY, file);
-                    intent.setDataAndType(uri, "*/*");
-                    intent.putExtra(Intent.EXTRA_STREAM, uri);
-
-                    context.startActivity(Intent.createChooser(intent, "Sending key..."));
+                        context.startActivity(Intent.createChooser(intent, "Sending key..."));
+                    }
+                    else{
+                        Snackbar.make(parentView, "Cant Write Temp Public Key.", Snackbar.LENGTH_SHORT).show();
+                    }
                 }
             });
 
@@ -213,7 +210,7 @@ public class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHold
                             PrivateKeySerializable privateKeySerializable = keySerializable.getPrivateKeySerializable();
 
                             if(privateKeySerializable == null) {
-                                System.out.println("PRIVATE KEY EMPTY");
+                                Snackbar.make(parentView, "Private Key Empty", Snackbar.LENGTH_SHORT).show();
                                 return;
                             }
 
@@ -274,7 +271,7 @@ public class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHold
                             //Delete from directory
                             String tempPath = HelperFunctions.getExternalStoragePath() +
                                     Constants.SELF_DIRECTORY +
-                                    "/" +
+                                    Constants.SEPARATOR +
                                     keySerializable.getKeyName() +
                                     Constants.EXTENSION_KEY;
                             File file = new File(tempPath);

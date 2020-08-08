@@ -39,7 +39,6 @@
         android:orientation="horizontal"
         android:paddingTop="5dp">
 
-
         <Button
             android:id="@+id/btn_dialog_deletekey_cancelKey"
             style="@style/AppTheme.Button"

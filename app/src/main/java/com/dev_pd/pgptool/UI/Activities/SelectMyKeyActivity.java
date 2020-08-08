@@ -1,10 +1,5 @@
 package com.dev_pd.pgptool.UI.Activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +8,11 @@ import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Others.Constants;
@@ -21,7 +20,7 @@ import com.dev_pd.pgptool.Others.HelperFunctions;
 import com.dev_pd.pgptool.R;
 import com.dev_pd.pgptool.UI.Adapters.MyKeysAdapter;
 import com.dev_pd.pgptool.UI.Adapters.OthersKeyAdapter;
-import com.dev_pd.pgptool.UI.OnKeySelectListener;
+import com.dev_pd.pgptool.UI.Interfaces.OnKeySelectListener;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,6 +34,7 @@ public class SelectMyKeyActivity extends AppCompatActivity implements OnKeySelec
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    private Button btn_confirm;
     private TextView textView;
     private ArrayList<KeySerializable> keySerializables;
     private ArrayList<String> keysPath;
@@ -58,7 +58,6 @@ public class SelectMyKeyActivity extends AppCompatActivity implements OnKeySelec
             keyViewType = intent.getIntExtra(Constants.KEY_SELECT_TYPE, Constants.KEY_SELECT_SELF);
         }
 
-
         view = findViewById(R.id.linear_selectMyKey);
         executorService = Executors.newSingleThreadExecutor();
 
@@ -66,52 +65,38 @@ public class SelectMyKeyActivity extends AppCompatActivity implements OnKeySelec
         keysPath = new ArrayList<>();
         context = this;
         recyclerView = findViewById(R.id.rv_selectMyKeys);
+        textView = findViewById(R.id.tv_selectKeySelectedKey);
 
-//        swipeRefreshLayout = findViewById(R.id.srl_myKeys);
-//        swipeRefreshLayout.setOnRefreshListener(MyKeysFragment.this);
-
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
         recyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
         layoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(layoutManager);
 
-        // specify an adapter (see also next example)
         if(keyViewType == Constants.KEY_SELECT_SELF)
             mAdapter = new MyKeysAdapter(context, keySerializables, keysPath, view, Constants.TYPE_SELECT, this);
         else
             mAdapter = new OthersKeyAdapter(context, keySerializables, keysPath, view, Constants.TYPE_SELECT, this);
+
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
 
-//        LoadMyKeysTask loadMyKeysTask = new LoadMyKeysTask(context);
-//        loadMyKeysTask.execute();
-
-        Button button = findViewById(R.id.btn_selectKeyReturn);
-        button.setOnClickListener(new View.OnClickListener() {
+        btn_confirm = findViewById(R.id.btn_selectKeyReturn);
+        btn_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra(Constants.KEY_SELECT_TYPE, keyViewType);
-                returnIntent.putExtra("result", finalKeyPath);
-                returnIntent.putExtra("key", finalKey);
-                System.out.println("-----------" + finalKeyPath);
+                returnIntent.putExtra(Constants.RETURN_PATH, finalKeyPath);
+                returnIntent.putExtra(Constants.RETURN_KEY, finalKey);
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();
             }
         });
 
-        textView = findViewById(R.id.tv_selectKeySelectedKey);
-//        final MyKeysAdapter my = (MyKeysAdapter) mAdapter;
 
         final Runnable refresh = new Runnable() {
             @Override
             public void run() {
                 mAdapter.notifyDataSetChanged();
-//                swipeRefreshLayout.setRefreshing(false);
             }
         };
 
@@ -119,13 +104,13 @@ public class SelectMyKeyActivity extends AppCompatActivity implements OnKeySelec
         runnableMyKeys = new Runnable() {
             @Override
             public void run() {
-                System.out.println("----------------------------------------------------------");
                 String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.SELF_DIRECTORY;
                 File directory = new File(path);
                 File[] files = directory.listFiles();
 
                 keysPath.clear();
                 keySerializables.clear();
+
                 if(files != null && files.length > 0) {
                     for (File curFile : files) {
                         String curPath = curFile.getAbsolutePath();
@@ -141,12 +126,7 @@ public class SelectMyKeyActivity extends AppCompatActivity implements OnKeySelec
                                     keysPath.add(curPath);
                                 }
                             }
-                            System.out.println(keySerializable != null);
                         }
-                        else {
-                            System.out.println("shit : " + name);
-                        }
-
                     }
                 }
 
@@ -158,13 +138,13 @@ public class SelectMyKeyActivity extends AppCompatActivity implements OnKeySelec
         runnableOtherKeys = new Runnable() {
             @Override
             public void run() {
-                System.out.println("----------------------------------------------------------");
                 String path = Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.OTHERS_DIRECTORY;
                 File directory = new File(path);
                 File[] files = directory.listFiles();
 
                 keysPath.clear();
                 keySerializables.clear();
+
                 if(files != null && files.length > 0) {
                     for (File curFile : files) {
                         String curPath = curFile.getAbsolutePath();
@@ -180,12 +160,7 @@ public class SelectMyKeyActivity extends AppCompatActivity implements OnKeySelec
                                     keysPath.add(curPath);
                                 }
                             }
-                            System.out.println(keySerializable != null);
                         }
-                        else {
-                            System.out.println("shit : " + name);
-                        }
-
                     }
                 }
 
@@ -198,7 +173,6 @@ public class SelectMyKeyActivity extends AppCompatActivity implements OnKeySelec
         else
             executorService.execute(runnableOtherKeys);
 
-
     }
 
     @Override
@@ -207,4 +181,5 @@ public class SelectMyKeyActivity extends AppCompatActivity implements OnKeySelec
         finalKey = keySerializable;
         finalKeyPath = keyPath;
     }
+
 }

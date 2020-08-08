@@ -1,8 +1,5 @@
 package com.dev_pd.pgptool.UI.Activities;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -14,9 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.dev_pd.pgptool.Cryptography.EncryptedPGPObject;
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
@@ -34,6 +32,7 @@ import java.util.concurrent.Executors;
 
 public class DecryptActivity extends AppCompatActivity {
 
+    private View view;
     private Button btn_decSelectFile;
     private Button btn_decChooseMyKey;
     private Button btn_dec_myKeyUnselect;
@@ -61,6 +60,7 @@ public class DecryptActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_decrypt);
 
+        view = findViewById(R.id.linear_decMain);
         btn_decSelectFile = findViewById(R.id.btn_decSelectFile);
         btn_dec_myKeyUnselect = findViewById(R.id.btn_dec_myKeyUnselect);
         btn_dec_myKeyView = findViewById(R.id.btn_dec_myKeyView);
@@ -80,7 +80,7 @@ public class DecryptActivity extends AppCompatActivity {
         final Runnable success = new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(DecryptActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                Snackbar.make(view, "File Decrypted Successfully.", Snackbar.LENGTH_SHORT).show();
                 show.cancel();
             }
         };
@@ -88,7 +88,7 @@ public class DecryptActivity extends AppCompatActivity {
         final Runnable failure = new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(DecryptActivity.this, "Fail", Toast.LENGTH_SHORT).show();
+                Snackbar.make(view, "File Decryption Failed.", Snackbar.LENGTH_SHORT).show();
                 show.cancel();
             }
         };
@@ -115,7 +115,7 @@ public class DecryptActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
-                startActivityForResult(intent, 5000);
+                startActivityForResult(intent, Constants.SELECT_FILE);
             }
         });
 
@@ -124,7 +124,7 @@ public class DecryptActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(DecryptActivity.this, SelectMyKeyActivity.class);
                 i.putExtra(Constants.KEY_SELECT_TYPE, Constants.KEY_SELECT_SELF);
-                startActivityForResult(i, 5003);
+                startActivityForResult(i, Constants.SELECT_BROWSE_KEY);
             }
         });
 
@@ -134,7 +134,7 @@ public class DecryptActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
-                startActivityForResult(intent, 5001);
+                startActivityForResult(intent, Constants.SELECT_SELF_KEY);
             }
         });
 
@@ -143,7 +143,7 @@ public class DecryptActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(DecryptActivity.this, SelectMyKeyActivity.class);
                 i.putExtra(Constants.KEY_SELECT_TYPE, Constants.KEY_SELECT_OTHERS);
-                startActivityForResult(i, 5003);
+                startActivityForResult(i, Constants.SELECT_BROWSE_KEY);
             }
         });
 
@@ -153,7 +153,7 @@ public class DecryptActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
-                startActivityForResult(intent, 5002);
+                startActivityForResult(intent, Constants.SELECT_OTHER_KEY);
             }
         });
 
@@ -161,38 +161,48 @@ public class DecryptActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                show = ProgressDialog.show(DecryptActivity.this, "Encrypting. Please wait...",
-                        "Could Take several minutes if selected file is large.", true);
+                if (myKey != null && othersKey != null) {
 
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        PGP pgp = new PGP(myKey.getKeySize());
-                        pgp.setMyPrivateKey(myKey.getPrivateKeySerializable().getPrivateKey(password));
-                        pgp.setMyPublicKey(myKey.getPublicKeySerializable().getPublicKey());
-                        pgp.setOthersPublicKey(othersKey.getPublicKeySerializable().getPublicKey());
-
-                        System.out.println(filePath);
-
-                        EncryptedPGPObject encryptedPGPObject = HelperFunctions.readEncryptedFile(filePath);
-
-                        String fileName = encryptedPGPObject.getFileName();
-                        String decPath = HelperFunctions.getExternalStoragePath() + Constants.DEC_DIRECTORY;
-                        String path =  decPath + "/" + fileName;
-                        byte[] decryptedData = pgp.decrypt(encryptedPGPObject);
-
-                        boolean b = HelperFunctions.writeOriginalFileFromBytesData(decryptedData, fileName);
-
-                        if(b){
-                            runOnUiThread(success);
-                        }
-                        else{
-                            runOnUiThread(failure);
-                        }
+                    if (myKey.getKeySize() != othersKey.getKeySize()) {
+                        Snackbar.make(view, "Keys are of different Size", Snackbar.LENGTH_SHORT).show();
+                        return;
                     }
-                };
 
-                executorService.execute(runnable);
+                    show = ProgressDialog.show(DecryptActivity.this, "Decrypting. Please wait...",
+                            "Could Take several minutes if selected file is large.", true);
+
+                    Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            PGP pgp = new PGP(myKey.getKeySize());
+                            pgp.setMyPrivateKey(myKey.getPrivateKeySerializable().getPrivateKey(password));
+                            pgp.setMyPublicKey(myKey.getPublicKeySerializable().getPublicKey());
+                            pgp.setOthersPublicKey(othersKey.getPublicKeySerializable().getPublicKey());
+
+                            System.out.println(filePath);
+
+                            EncryptedPGPObject encryptedPGPObject = HelperFunctions.readEncryptedFile(filePath);
+
+                            String fileName = encryptedPGPObject.getFileName();
+                            String decPath = HelperFunctions.getExternalStoragePath() + Constants.DEC_DIRECTORY;
+                            String path = decPath + Constants.SEPARATOR + fileName;
+                            byte[] decryptedData = pgp.decrypt(encryptedPGPObject);
+
+                            boolean b = HelperFunctions.writeOriginalFileFromBytesData(decryptedData, fileName);
+
+                            if (b) {
+                                runOnUiThread(success);
+                            } else {
+                                runOnUiThread(failure);
+                            }
+                        }
+                    };
+
+                    executorService.execute(runnable);
+                }
+                else{
+                    Snackbar.make(view, "Please Select Keys", Snackbar.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -273,7 +283,7 @@ public class DecryptActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, resultData);
 
         //File
-        if (requestCode == 5000 && resultCode == Activity.RESULT_OK) {
+        if (requestCode == Constants.SELECT_FILE && resultCode == Activity.RESULT_OK) {
             Uri uri = null;
             if (resultData != null) {
                 uri = resultData.getData();
@@ -294,7 +304,7 @@ public class DecryptActivity extends AppCompatActivity {
             }
         }
         //My key
-        else if (requestCode == 5001 && resultCode == Activity.RESULT_OK) {
+        else if (requestCode == Constants.SELECT_SELF_KEY && resultCode == Activity.RESULT_OK) {
             Uri uri = null;
             if (resultData != null) {
                 uri = resultData.getData();
@@ -385,7 +395,7 @@ public class DecryptActivity extends AppCompatActivity {
             }
         }
         //Others Key
-        else if (requestCode == 5002 && resultCode == Activity.RESULT_OK) {
+        else if (requestCode == Constants.SELECT_OTHER_KEY && resultCode == Activity.RESULT_OK) {
             Uri uri = null;
             if (resultData != null) {
                 uri = resultData.getData();
@@ -418,12 +428,11 @@ public class DecryptActivity extends AppCompatActivity {
 
             }
         }
-        else if (requestCode == 5003) {
+        else if (requestCode == Constants.SELECT_BROWSE_KEY) {
             if (resultCode == Activity.RESULT_OK) {
                 int type = resultData.getIntExtra(Constants.KEY_SELECT_TYPE, Constants.KEY_SELECT_SELF);
-                String result = resultData.getStringExtra("result");
-                final KeySerializable keySerializable = (KeySerializable) resultData.getSerializableExtra("key");
-                System.out.println("==============" + result);
+                String returnKeyPath = resultData.getStringExtra(Constants.RETURN_PATH);
+                final KeySerializable keySerializable = (KeySerializable) resultData.getSerializableExtra(Constants.RETURN_KEY);
                 System.out.println("==============" + keySerializable);
 
                 if (type == Constants.KEY_SELECT_SELF) {
@@ -432,7 +441,6 @@ public class DecryptActivity extends AppCompatActivity {
                         View view = LayoutInflater.from(DecryptActivity.this).inflate(R.layout.dialog_enterpassword, null);
 
                         final EditText et_enterpswd = view.findViewById(R.id.et_enterpswd);
-//                        progressBar.setVisibility(View.INVISIBLE);
                         final Button btn_confirmpswd = view.findViewById(R.id.btn_confirmpswd);
                         final Button btn_cancelpswd = view.findViewById(R.id.btn_cancelpswd);
                         AlertDialog.Builder builder = new AlertDialog.Builder(DecryptActivity.this);

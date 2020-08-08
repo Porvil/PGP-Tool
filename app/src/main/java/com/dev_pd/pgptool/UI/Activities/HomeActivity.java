@@ -34,9 +34,6 @@ public class HomeActivity extends AppCompatActivity {
     private Button btn_viewKeys;
     private View view;
 
-    private final int REQUEST_CODE_OTHERS_KEY = 4000;
-    private final int PERMISSION_ALL = 1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +80,7 @@ public class HomeActivity extends AppCompatActivity {
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
 
-                startActivityForResult(intent, REQUEST_CODE_OTHERS_KEY);
+                startActivityForResult(intent, Constants.ADD_OTHERS_KEY);
             }
         });
 
@@ -100,7 +97,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         super.onActivityResult(requestCode, resultCode, resultData);
-        if (requestCode == REQUEST_CODE_OTHERS_KEY && resultCode == Activity.RESULT_OK) {
+        if (requestCode == Constants.ADD_OTHERS_KEY && resultCode == Activity.RESULT_OK) {
             Uri uri;
             if (resultData != null) {
                 uri = resultData.getData();
@@ -135,7 +132,7 @@ public class HomeActivity extends AppCompatActivity {
         int MyVersion = Build.VERSION.SDK_INT;
         if (MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1) {
             if (!hasPermissions(PERMISSIONS)) {
-                ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+                ActivityCompat.requestPermissions(this, PERMISSIONS, Constants.PERMISSION_ALL);
             }
         }
     }
@@ -154,7 +151,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case PERMISSION_ALL:
+            case Constants.PERMISSION_ALL:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Snackbar.make(view, "Permissions Granted",
                             Snackbar.LENGTH_SHORT).show();
