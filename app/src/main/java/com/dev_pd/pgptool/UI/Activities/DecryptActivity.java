@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.dev_pd.pgptool.Cryptography.EncryptedPGPObject;
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Cryptography.PGP;
+import com.dev_pd.pgptool.Cryptography.PGPReturnData;
 import com.dev_pd.pgptool.Others.Constants;
 import com.dev_pd.pgptool.Others.FileUtilsMine;
 import com.dev_pd.pgptool.Others.HelperFunctions;
@@ -55,6 +56,9 @@ public class DecryptActivity extends AppCompatActivity {
     private ProgressDialog show;
     ExecutorService executorService;
 
+    private boolean isErrorInDecryption = false;
+    private String error = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,14 +86,33 @@ public class DecryptActivity extends AppCompatActivity {
             public void run() {
                 Snackbar.make(view, "File Decrypted Successfully.", Snackbar.LENGTH_SHORT).show();
                 show.cancel();
+
+                isErrorInDecryption = false;
+                error = "";
+
             }
         };
 
         final Runnable failure = new Runnable() {
             @Override
             public void run() {
-                Snackbar.make(view, "File Decryption Failed.", Snackbar.LENGTH_SHORT).show();
+                String snack = "File Decryption Failed.";
+                if(isErrorInDecryption == true){
+                    snack = error;
+                }
+
+                Snackbar.make(view, snack, Snackbar.LENGTH_INDEFINITE)
+                        .setAction("OK", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                            }
+                        })
+                        .show();
                 show.cancel();
+
+                isErrorInDecryption = false;
+                error = "";
             }
         };
 
@@ -161,6 +184,11 @@ public class DecryptActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                if (TextUtils.isEmpty(fileName)) {
+                    Snackbar.make(view, "No File Selected", Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+
                 if (myKey != null && othersKey != null) {
 
                     if (myKey.getKeySize() != othersKey.getKeySize()) {
@@ -183,16 +211,40 @@ public class DecryptActivity extends AppCompatActivity {
 
                             EncryptedPGPObject encryptedPGPObject = HelperFunctions.readEncryptedFile(filePath);
 
+                            if(encryptedPGPObject == null){
+                                isErrorInDecryption = true;
+                                error = "Selected File is not a \"" + Constants.EXTENSION_DATA + "\" file.";
+                                runOnUiThread(failure);
+                                return;
+                            }
+
+                            if(encryptedPGPObject.getRsaKeyLength() != myKey.getKeySize()){
+                                isErrorInDecryption = true;
+                                error = "The selected file is encrypted with key size of " + encryptedPGPObject.getRsaKeyLength() +
+                                        ", but the selected keys are of key size " + myKey.getKeySize();
+                                runOnUiThread(failure);
+                                return;
+                            }
+
                             String fileName = encryptedPGPObject.getFileName();
                             String decPath = HelperFunctions.getExternalStoragePath() + Constants.DEC_DIRECTORY;
                             String path = decPath + Constants.SEPARATOR + fileName;
-                            byte[] decryptedData = pgp.decrypt(encryptedPGPObject);
+                            PGPReturnData decryptedData = pgp.decrypt(encryptedPGPObject);
 
-                            boolean b = HelperFunctions.writeOriginalFileFromBytesData(decryptedData, fileName);
+                            if(!decryptedData.isError()){
+                                boolean b = HelperFunctions.writeOriginalFileFromBytesData(decryptedData.getDecryptedData(), fileName);
 
-                            if (b) {
-                                runOnUiThread(success);
-                            } else {
+                                if (b) {
+                                    runOnUiThread(success);
+                                }
+                                else {
+                                    runOnUiThread(failure);
+                                }
+                            }
+                            else{
+                                //SOME ERROR
+                                isErrorInDecryption = true;
+                                error = decryptedData.getException().getMessage();
                                 runOnUiThread(failure);
                             }
                         }
@@ -298,6 +350,9 @@ public class DecryptActivity extends AppCompatActivity {
                     fileName = dataFileName;
                 }
 
+                if(!HelperFunctions.isValidPGPDataFile(fileName)){
+                    Snackbar.make(view, "The selected file is not a PGP Data File, Please change.", Snackbar.LENGTH_LONG).show();
+                }
                 filePath = path;
                 tv_dec_FileName.setText(filePath);
 

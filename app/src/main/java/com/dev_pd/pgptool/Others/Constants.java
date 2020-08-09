@@ -2,6 +2,9 @@ package com.dev_pd.pgptool.Others;
 
 public class Constants {
 
+    public static final String PGP_ENCRYPT = "Encrypt";
+    public static final String PGP_DECRYPT = "Decrypt";
+
     public static final String DIRECTORY = "/PGP Tool";
     public static final String SELF_DIRECTORY = DIRECTORY + "/My Keys";
     public static final String OTHERS_DIRECTORY = DIRECTORY + "/Others Keys";

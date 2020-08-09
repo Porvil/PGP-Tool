@@ -1,16 +1,17 @@
 package com.dev_pd.pgptool.Cryptography;
 
-import java.io.UnsupportedEncodingException;
+import com.dev_pd.pgptool.Others.Constants;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -51,54 +52,39 @@ public class PGP {
         return (myPublicKey != null && myPrivateKey != null && othersPublicKey != null);            
     }
 
-    public EncryptedPGPObject encrypt(String data, String fileName){
+    public PGPReturnData encrypt(byte[] dataBytes, String fileName){
         if(!check()){
             System.out.println("KEYS NOT SET");
             return null;
         }
         try {
-            byte[] dataBytes = Utility.getBytes(data);
-            return __encrypt(dataBytes, fileName);
-        } catch (UnsupportedEncodingException |
-                NoSuchAlgorithmException |
+            EncryptedPGPObject encryptedPGPObject = __encrypt(dataBytes, fileName);
+            PGPReturnData pgpReturnData = new PGPReturnData(Constants.PGP_ENCRYPT, false, null);
+            pgpReturnData.setEncryptedPGPObject(encryptedPGPObject);
+            return pgpReturnData;
+        } catch (NoSuchAlgorithmException |
                 NoSuchPaddingException |
                 InvalidKeyException |
                 IllegalBlockSizeException |
                 BadPaddingException |
-                NoSuchProviderException |
-                InvalidAlgorithmParameterException |
                 SignatureException ex) {
             System.out.println("Exception = " + ex.toString());
             Logger.getLogger(PGP.class.getName()).log(Level.SEVERE, null, ex);
+
+            PGPReturnData pgpReturnData = new PGPReturnData(Constants.PGP_ENCRYPT, true, ex);
+            pgpReturnData.setEncryptedPGPObject(null);
+            return pgpReturnData;
         }
-        
-        return null;
+
     }
     
-    public EncryptedPGPObject encrypt(byte[] dataBytes, String fileName){
-        if(!check()){
-            System.out.println("KEYS NOT SET");
-            return null;
-        }
-        try {
-            return __encrypt(dataBytes, fileName);
-        } catch (UnsupportedEncodingException |
-                NoSuchAlgorithmException |
-                NoSuchPaddingException |
-                InvalidKeyException |
-                IllegalBlockSizeException |
-                BadPaddingException |
-                NoSuchProviderException |
-                InvalidAlgorithmParameterException |
-                SignatureException ex) {
-            System.out.println("Exception = " + ex.toString());
-            Logger.getLogger(PGP.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        return null;
-    }
-    
-    private EncryptedPGPObject __encrypt(byte[] dataBytes, String fileName) throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException, InvalidAlgorithmParameterException, SignatureException {
+    private EncryptedPGPObject __encrypt(byte[] dataBytes, String fileName) throws
+            NoSuchAlgorithmException,
+            NoSuchPaddingException,
+            InvalidKeyException,
+            IllegalBlockSizeException,
+            BadPaddingException,
+            SignatureException {
         
         // Random Session Key for AES Encryption
         KeyGenerator aesKeyGenerator = KeyGenerator.getInstance("AES");
@@ -120,40 +106,50 @@ public class PGP {
         Cipher rsaCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
         rsaCipher.init(Cipher.ENCRYPT_MODE, othersPublicKey);
         byte[] encryptedAESKey = rsaCipher.doFinal(aesSessionKey.getEncoded());
-        
-        
+
         EncryptedPGPObject encryptedPGPObject = new EncryptedPGPObject(fileName, keySize, digitalSignature, iv, cipherText, encryptedAESKey);
         System.out.println(encryptedPGPObject);
         
         return encryptedPGPObject;
     }
 
-    public byte[] decrypt(EncryptedPGPObject encryptedPGPObject){
+    public PGPReturnData decrypt(EncryptedPGPObject encryptedPGPObject){
         if(encryptedPGPObject == null){
             System.out.println("Null object passed as pgp object");
             return null;
         }
         
         try {
-            return __decrypt(encryptedPGPObject);
-        } catch (UnsupportedEncodingException |
-                NoSuchAlgorithmException |
+            byte[] bytes = __decrypt(encryptedPGPObject);
+            PGPReturnData pgpReturnData = new PGPReturnData(Constants.PGP_DECRYPT, false, null);
+            pgpReturnData.setDecryptedData(bytes);
+            return pgpReturnData;
+        } catch (NoSuchAlgorithmException |
                 NoSuchPaddingException |
                 InvalidKeyException |
                 IllegalBlockSizeException |
                 BadPaddingException |
-                NoSuchProviderException |
                 InvalidAlgorithmParameterException |
                 SignatureException ex) {
             System.out.println("Exception = " + ex.toString());
             Logger.getLogger(PGP.class.getName()).log(Level.SEVERE, null, ex);
+
+            PGPReturnData pgpReturnData = new PGPReturnData(Constants.PGP_DECRYPT, true, ex);
+            pgpReturnData.setDecryptedData(null);
+            return pgpReturnData;
         }
 
-        return null;
     }
     
-    private byte[] __decrypt(EncryptedPGPObject encryptedPGPObject) throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException, InvalidAlgorithmParameterException, SignatureException {
-        
+    private byte[] __decrypt(EncryptedPGPObject encryptedPGPObject) throws
+            NoSuchAlgorithmException,
+            NoSuchPaddingException,
+            InvalidKeyException,
+            IllegalBlockSizeException,
+            BadPaddingException,
+            InvalidAlgorithmParameterException,
+            SignatureException {
+
         byte[] encryptedAESKey = encryptedPGPObject.getEncryptedAESKey();
         byte[] iv = encryptedPGPObject.getIv();
         byte[] cipherText = encryptedPGPObject.getCipherText();
@@ -178,7 +174,6 @@ public class PGP {
         boolean isCorrect = sha1WithRSASigner.verify(digitalSignature);
         
         System.out.println("SIG = " + isCorrect);
-        System.out.println("====");
         System.out.println(decryptedData);
 
         return decryptedDataBytes;

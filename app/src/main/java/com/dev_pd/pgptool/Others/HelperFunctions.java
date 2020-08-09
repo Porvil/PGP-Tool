@@ -28,6 +28,14 @@ public class HelperFunctions {
         return false;
     }
 
+    public static boolean isValidPGPDataFile(String name){
+        if(name.lastIndexOf(".") != -1 && name.lastIndexOf(".") != 0)
+            if (name.substring(name.lastIndexOf(".")).equals(Constants.EXTENSION_DATA))
+                return true;
+
+        return false;
+    }
+
     private static boolean writeSerializableObject(String fileName, String extension, Object object, String directory){
         //Checking the availability state of the External Storage.
         if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {

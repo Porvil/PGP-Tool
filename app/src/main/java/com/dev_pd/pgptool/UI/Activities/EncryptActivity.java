@@ -16,9 +16,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.dev_pd.pgptool.Cryptography.EncryptedPGPObject;
 import com.dev_pd.pgptool.Cryptography.KeySerializable;
 import com.dev_pd.pgptool.Cryptography.PGP;
+import com.dev_pd.pgptool.Cryptography.PGPReturnData;
 import com.dev_pd.pgptool.Others.Constants;
 import com.dev_pd.pgptool.Others.FileUtilsMine;
 import com.dev_pd.pgptool.Others.HelperFunctions;
@@ -56,6 +56,9 @@ public class EncryptActivity extends AppCompatActivity {
     private ProgressDialog show;
     private ExecutorService executorService;
 
+    private boolean isErrorInEncryption = false;
+    private String error = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,14 +87,25 @@ public class EncryptActivity extends AppCompatActivity {
             public void run() {
                 Snackbar.make(view, "File Encrypted Successfully.", Snackbar.LENGTH_SHORT).show();
                 show.cancel();
+
+                isErrorInEncryption = false;
+                error = "";
             }
         };
 
         final Runnable failure = new Runnable() {
             @Override
             public void run() {
-                Snackbar.make(view, "File Encryption Failed.", Snackbar.LENGTH_SHORT).show();
+                String snack = "File Encryption Failed.";
+                if(isErrorInEncryption == true){
+                    snack = error;
+                }
+
+                Snackbar.make(view, snack, Snackbar.LENGTH_SHORT).show();
                 show.cancel();
+
+                isErrorInEncryption = false;
+                error = "";
             }
         };
 
@@ -163,17 +177,21 @@ public class EncryptActivity extends AppCompatActivity {
         btn_encryptFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (TextUtils.isEmpty(fileName)) {
+                    Snackbar.make(view, "No File Selected", Snackbar.LENGTH_LONG).show();
+                    return;
+                }
 
                 if (myKey != null && othersKey != null) {
 
                     if(myKey.getKeySize() != othersKey.getKeySize()){
-                        Snackbar.make(view, "Keys are of different Size", Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(view, "Keys are of different Size", Snackbar.LENGTH_LONG).show();
                         return;
                     }
 
                     final String encFileName = et_setEncFileName.getText().toString().trim();
 
-                    if (TextUtils.isEmpty(fileName)) {
+                    if (TextUtils.isEmpty(encFileName)) {
                         et_setEncFileName.setError("Cant be empty");
                         return;
                     }
@@ -192,12 +210,20 @@ public class EncryptActivity extends AppCompatActivity {
                             System.out.println(filePath);
                             byte[] bytes = HelperFunctions.readFileToBytes(filePath);
 
-                            EncryptedPGPObject encrypt = pgp.encrypt(bytes, fileName);
-
-                            boolean b = HelperFunctions.writeEncryptedData(encFileName, Constants.EXTENSION_DATA, encrypt);
-                            if (b) {
-                                runOnUiThread(success);
-                            } else {
+                            PGPReturnData encrypt = pgp.encrypt(bytes, fileName);
+                            if(!encrypt.isError()){
+                                boolean b = HelperFunctions.writeEncryptedData(encFileName, Constants.EXTENSION_DATA, encrypt.getEncryptedPGPObject());
+                                if (b) {
+                                    runOnUiThread(success);
+                                }
+                                else {
+                                    runOnUiThread(failure);
+                                }
+                            }
+                            else{
+                                //SOME ERROR
+                                isErrorInEncryption = true;
+                                error = encrypt.getException().getMessage();
                                 runOnUiThread(failure);
                             }
                         }
