@@ -30,8 +30,7 @@ public class HelperFunctions {
 
     private static boolean isValidFileWithExtension(String name, String extension){
         if(name.lastIndexOf(".") != -1 && name.lastIndexOf(".") != 0)
-            if (name.substring(name.lastIndexOf(".")).equals(extension))
-                return true;
+            return name.substring(name.lastIndexOf(".")).equals(extension);
 
         return false;
     }
@@ -112,8 +111,6 @@ public class HelperFunctions {
             out.close();
             fileOutputStream.close();
             return true;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -128,7 +125,7 @@ public class HelperFunctions {
             FileInputStream file = new FileInputStream(path);
             ObjectInputStream in = new ObjectInputStream(file);
 
-            object1 = (Object) in.readObject();
+            object1 = in.readObject();
 
             in.close();
             file.close();
@@ -157,9 +154,6 @@ public class HelperFunctions {
             return null;
         }
 
-        if(object == null)
-            return null;
-
         return object;
     }
 
@@ -173,14 +167,11 @@ public class HelperFunctions {
             return null;
         }
 
-        if(object == null)
-            return null;
-
         return object;
     }
 
     public static byte[] readFileToBytes(String path){
-        byte fileContent[] = null;
+        byte[] fileContent = null;
 
         File file = new File(path);
         FileInputStream fin = null;

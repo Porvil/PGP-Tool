@@ -69,8 +69,7 @@ public class OthersKeyAdapter extends RecyclerView.Adapter<OthersKeyAdapter.MyVi
                     .inflate(R.layout.item_keys_for_select, parent, false);
         }
 
-        MyViewHolder vh = new MyViewHolder(v);
-        return vh;
+        return new MyViewHolder(v);
     }
 
     @Override

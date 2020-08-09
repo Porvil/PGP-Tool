@@ -109,7 +109,7 @@ public class EncryptActivity extends AppCompatActivity {
             @Override
             public void run() {
                 String snack = "File Encryption Failed.";
-                if(isErrorInEncryption == true){
+                if(isErrorInEncryption){
                     snack = error;
                 }
 

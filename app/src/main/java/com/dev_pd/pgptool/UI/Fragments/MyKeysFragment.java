@@ -45,8 +45,7 @@ public class MyKeysFragment extends Fragment implements SwipeRefreshLayout.OnRef
     }
 
     public static MyKeysFragment newInstance() {
-        MyKeysFragment fragment = new MyKeysFragment();
-        return fragment;
+        return new MyKeysFragment();
     }
 
     @Override

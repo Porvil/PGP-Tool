@@ -14,7 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".UI.Activities.SelectMyKeyActivity"></activity>
+        <activity android:name=".UI.Activities.SelectMyKeyActivity"
+            android:launchMode="singleTask" />
         <activity
             android:name=".UI.Activities.ViewKeysActivity"
             android:label="@string/title_activity_view_keys"
@@ -32,11 +33,6 @@
         <activity
             android:name=".UI.Activities.HomeActivity"
             android:launchMode="singleTask">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
-
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
         </activity>
         <activity
             android:name=".UI.Activities.SplashActivity"

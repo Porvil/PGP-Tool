@@ -44,12 +44,8 @@ public class PGP {
         this.myPrivateKey = myPrivateKey;
     }
 
-    public boolean isKeysSet(){
-        return !check();
-    }
-
     private boolean check(){
-        return (myPublicKey != null && myPrivateKey != null && othersPublicKey != null);            
+        return (myPublicKey != null && myPrivateKey != null && othersPublicKey != null);
     }
 
     public PGPReturnData encrypt(byte[] dataBytes, String fileName){
@@ -107,9 +103,7 @@ public class PGP {
         rsaCipher.init(Cipher.ENCRYPT_MODE, othersPublicKey);
         byte[] encryptedAESKey = rsaCipher.doFinal(aesSessionKey.getEncoded());
 
-        EncryptedPGPObject encryptedPGPObject = new EncryptedPGPObject(fileName, keySize, digitalSignature, iv, cipherText, encryptedAESKey);
-
-        return encryptedPGPObject;
+        return new EncryptedPGPObject(fileName, keySize, digitalSignature, iv, cipherText, encryptedAESKey);
     }
 
     public PGPReturnData decrypt(EncryptedPGPObject encryptedPGPObject){

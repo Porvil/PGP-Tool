@@ -150,27 +150,24 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case Constants.PERMISSION_ALL:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Snackbar.make(view, "Permissions Granted.",
-                            Snackbar.LENGTH_SHORT).show();
-                }
-                else {
-                    final Snackbar snackbar = Snackbar.make(view, "App may not work properly.",
-                            Snackbar.LENGTH_INDEFINITE);
-                    snackbar.setAction("Give Permissions", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            checkPermissions();
-                            snackbar.dismiss();
-                        }
-                    });
-                    snackbar.show();
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == Constants.PERMISSION_ALL) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Snackbar.make(view, "Permissions Granted.",
+                        Snackbar.LENGTH_SHORT).show();
+            } else {
+                final Snackbar snackbar = Snackbar.make(view, "App may not work properly.",
+                        Snackbar.LENGTH_INDEFINITE);
+                snackbar.setAction("Give Permissions", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        checkPermissions();
+                        snackbar.dismiss();
+                    }
+                });
+                snackbar.show();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
