@@ -1,11 +1,13 @@
 package com.dev_pd.pgptool.Cryptography;
 
+import com.dev_pd.pgptool.Others.Constants;
+
 import java.io.Serializable;
 import java.util.Arrays;
 
 public class EncryptedPGPObject implements Serializable{
 
-    private static final long serialVersionUID = 50L;
+    private static final long serialVersionUID = Constants.SERIALVERSIONUID_ENCRYPTEDPGPOBJECT;
     private String fileName;
     private int rsaKeyLength;
     private byte[] digitalSignature;
@@ -13,7 +15,12 @@ public class EncryptedPGPObject implements Serializable{
     private byte[] cipherText;
     private byte[] encryptedAESKey;
 
-    public EncryptedPGPObject(String fileName, int rsaKeyLength, byte[] digitalSignature, byte[] iv, byte[] cipherText, byte[] encryptedAESKey) {
+    public EncryptedPGPObject(String fileName,
+                              int rsaKeyLength,
+                              byte[] digitalSignature,
+                              byte[] iv,
+                              byte[] cipherText,
+                              byte[] encryptedAESKey) {
         this.fileName = fileName;
         this.rsaKeyLength = rsaKeyLength;
         this.digitalSignature = digitalSignature;

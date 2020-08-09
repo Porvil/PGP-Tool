@@ -1,21 +1,12 @@
 package com.dev_pd.pgptool.Cryptography;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
-import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -30,7 +21,6 @@ public class Utility {
 
         KeyPairGenerator keyPairGenerator = null;
         try {
-
             keyPairGenerator = KeyPairGenerator.getInstance("RSA");
             keyPairGenerator.initialize(keySize);
             KeyPair keyPair = keyPairGenerator.generateKeyPair();
@@ -62,20 +52,6 @@ public class Utility {
             System.out.println("Exception : " + e);
             return null;
         }
-    }
-    
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    static public byte[] readFile(String fileName){
-        try {
-            File file = new File(fileName);
-            byte[] fileContent = Files.readAllBytes(file.toPath());
-            return fileContent;
-        } catch (IOException ex) {
-            System.out.println("Exception = " + ex.toString());
-            Logger.getLogger(Utility.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        return null;
     }
 
     public static byte[] getHash(String password, byte[] salt){

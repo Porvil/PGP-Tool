@@ -108,14 +108,13 @@ public class PGP {
         byte[] encryptedAESKey = rsaCipher.doFinal(aesSessionKey.getEncoded());
 
         EncryptedPGPObject encryptedPGPObject = new EncryptedPGPObject(fileName, keySize, digitalSignature, iv, cipherText, encryptedAESKey);
-        System.out.println(encryptedPGPObject);
-        
+
         return encryptedPGPObject;
     }
 
     public PGPReturnData decrypt(EncryptedPGPObject encryptedPGPObject){
         if(encryptedPGPObject == null){
-            System.out.println("Null object passed as pgp object");
+            System.out.println("Null object passed as Encrypted PGP Object");
             return null;
         }
         
@@ -173,8 +172,7 @@ public class PGP {
         sha1WithRSASigner.update(decryptedDataBytes);
         boolean isCorrect = sha1WithRSASigner.verify(digitalSignature);
         
-        System.out.println("SIG = " + isCorrect);
-        System.out.println(decryptedData);
+        System.out.println("Signature Verified? = " + isCorrect);
 
         return decryptedDataBytes;
     }

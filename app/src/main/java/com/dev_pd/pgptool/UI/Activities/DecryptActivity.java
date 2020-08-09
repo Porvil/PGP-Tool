@@ -54,10 +54,11 @@ public class DecryptActivity extends AppCompatActivity {
     private KeySerializable myKey;
     private KeySerializable othersKey;
     private ProgressDialog show;
-    ExecutorService executorService;
+    private ExecutorService executorService;
 
     private boolean isErrorInDecryption = false;
     private String error = "";
+    private String decryptedFileName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,11 +85,22 @@ public class DecryptActivity extends AppCompatActivity {
         final Runnable success = new Runnable() {
             @Override
             public void run() {
-                Snackbar.make(view, "File Decrypted Successfully.", Snackbar.LENGTH_SHORT).show();
+                String fileLoc = HelperFunctions.getExternalStoragePath() +
+                        Constants.DEC_DIRECTORY +
+                        Constants.SEPARATOR +
+                        decryptedFileName;
+                Snackbar.make(view, "File Decrypted at \"" + fileLoc + "\"", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("OK", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                            }
+                        }).show();
                 show.cancel();
 
                 isErrorInDecryption = false;
                 error = "";
+                decryptedFileName = "";
 
             }
         };
@@ -113,6 +125,7 @@ public class DecryptActivity extends AppCompatActivity {
 
                 isErrorInDecryption = false;
                 error = "";
+                decryptedFileName = "";
             }
         };
 
@@ -192,11 +205,11 @@ public class DecryptActivity extends AppCompatActivity {
                 if (myKey != null && othersKey != null) {
 
                     if (myKey.getKeySize() != othersKey.getKeySize()) {
-                        Snackbar.make(view, "Keys are of different Size", Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(view, "Keys are of different sizes.", Snackbar.LENGTH_LONG).show();
                         return;
                     }
 
-                    show = ProgressDialog.show(DecryptActivity.this, "Decrypting. Please wait...",
+                    show = ProgressDialog.show(DecryptActivity.this, "Decrypting, Please wait...",
                             "Could Take several minutes if selected file is large.", true);
 
                     Runnable runnable = new Runnable() {
@@ -235,6 +248,7 @@ public class DecryptActivity extends AppCompatActivity {
                                 boolean b = HelperFunctions.writeOriginalFileFromBytesData(decryptedData.getDecryptedData(), fileName);
 
                                 if (b) {
+                                    decryptedFileName = encryptedPGPObject.getFileName();
                                     runOnUiThread(success);
                                 }
                                 else {
@@ -253,7 +267,7 @@ public class DecryptActivity extends AppCompatActivity {
                     executorService.execute(runnable);
                 }
                 else{
-                    Snackbar.make(view, "Please Select Keys", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view, "No Keys Selected", Snackbar.LENGTH_LONG).show();
                 }
 
             }
@@ -288,7 +302,7 @@ public class DecryptActivity extends AppCompatActivity {
                 }
                 else{
                     View view = findViewById(R.id.linear_decMyKeyContainer);
-                    Snackbar.make(view, "No Key Selected", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view, "No Key Selected", Snackbar.LENGTH_LONG).show();
                 }
             }
         });
@@ -322,7 +336,7 @@ public class DecryptActivity extends AppCompatActivity {
                 }
                 else{
                     View view = findViewById(R.id.linear_decOthersKeyContainer);
-                    Snackbar.make(view, "No Other's Key Selected", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view, "No Other's Key Selected", Snackbar.LENGTH_LONG).show();
                 }
             }
         });
@@ -351,7 +365,7 @@ public class DecryptActivity extends AppCompatActivity {
                 }
 
                 if(!HelperFunctions.isValidPGPDataFile(fileName)){
-                    Snackbar.make(view, "The selected file is not a PGP Data File, Please change.", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(view, error = "Selected File is not a \"" + Constants.EXTENSION_DATA + "\" file.", Snackbar.LENGTH_LONG).show();
                 }
                 filePath = path;
                 tv_dec_FileName.setText(filePath);
@@ -370,7 +384,7 @@ public class DecryptActivity extends AppCompatActivity {
 
                 File file = new File(path);
                 if(!HelperFunctions.isValidKeyFile(file.getName())){
-                    System.out.println("not a key file");
+                    System.out.println("Not a key file");
                     return;
                 }
 
@@ -420,9 +434,8 @@ public class DecryptActivity extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         PrivateKey privateKey = keySerializable.getPrivateKeySerializable().getPrivateKey(pswd);
-//
+
                                         if(privateKey == null){
-                                            //error here
                                             runOnUiThread(wrongpswd);
                                             return;
                                         }
@@ -542,7 +555,6 @@ public class DecryptActivity extends AppCompatActivity {
                                         PrivateKey privateKey = keySerializable.getPrivateKeySerializable().getPrivateKey(pswd);
 
                                         if (privateKey == null) {
-                                            //error here
                                             runOnUiThread(wrongpswd);
                                             return;
                                         }
@@ -567,7 +579,6 @@ public class DecryptActivity extends AppCompatActivity {
                         System.out.println("Not a public key");
                     }
                 }
-
             }
         }
     }

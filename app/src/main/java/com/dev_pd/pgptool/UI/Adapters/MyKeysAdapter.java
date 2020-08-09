@@ -155,7 +155,7 @@ public class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHold
                         context.startActivity(Intent.createChooser(intent, "Sending key..."));
                     }
                     else{
-                        Snackbar.make(parentView, "Cant Write Temp Public Key.", Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(parentView, "Cant Write Temp. Public Key.", Snackbar.LENGTH_LONG).show();
                     }
                 }
             });
@@ -229,11 +229,11 @@ public class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHold
                                 if(b){
                                     HelperFunctions.writeKeySerializableSelf(keySerializable.getKeyName(), Constants.EXTENSION_KEY, keySerializable);
                                     notifyItemChanged(position);
-                                    Snackbar.make(parentView, "Password Changed Successfully.", Snackbar.LENGTH_SHORT).show();
+                                    Snackbar.make(parentView, "Password Changed Successfully.", Snackbar.LENGTH_LONG).show();
                                     dialog.dismiss();
                                 }
                                 else {
-                                    Snackbar.make(view, "Wrong Password", Snackbar.LENGTH_SHORT).show();
+                                    Snackbar.make(view, "Wrong Password", Snackbar.LENGTH_LONG).show();
                                     et_oldpswd.setText("");
                                     et_newpswd.setText("");
                                     et_confirmnewpswd.setText("");
@@ -282,15 +282,15 @@ public class MyKeysAdapter extends RecyclerView.Adapter<MyKeysAdapter.MyViewHold
                                     keysPath.remove(position);
                                     notifyItemRemoved(position);
                                     notifyItemRangeChanged(position, keySerializables.size());
-                                    Snackbar.make(parentView, "Key successfully Deleted.", Snackbar.LENGTH_SHORT).show();
+                                    Snackbar.make(parentView, "Key successfully Deleted.", Snackbar.LENGTH_LONG).show();
                                     dialog.dismiss();
                                 }
                                 else {
-                                    Snackbar.make(parentView, "Failed to delete Key.", Snackbar.LENGTH_SHORT).show();
+                                    Snackbar.make(parentView, "Failed to delete Key.", Snackbar.LENGTH_LONG).show();
                                 }
                             }
                             else {
-                                Snackbar.make(parentView, "Key doesn't exist", Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(parentView, "Key doesn't exist", Snackbar.LENGTH_LONG).show();
                             }
                         }
                     });

@@ -40,6 +40,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         view = findViewById(R.id.main);
+        //checkPermissions() should be called only after assigning root View;
         checkPermissions();
 
         btn_encrypt = findViewById(R.id.btn_encrypt);
@@ -75,7 +76,6 @@ public class HomeActivity extends AppCompatActivity {
         btn_addOthersKeys.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
@@ -153,7 +153,7 @@ public class HomeActivity extends AppCompatActivity {
         switch (requestCode) {
             case Constants.PERMISSION_ALL:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Snackbar.make(view, "Permissions Granted",
+                    Snackbar.make(view, "Permissions Granted.",
                             Snackbar.LENGTH_SHORT).show();
                 }
                 else {

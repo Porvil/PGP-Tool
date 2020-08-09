@@ -5,8 +5,7 @@ https://stackoverflow.com/questions/13209494/how-to-get-the-full-file-path-from-
 
 answered Apr 2 '19 at 7:41
 satyawan hajare
-
- */
+*/
 
 import android.annotation.SuppressLint;
 import android.content.ContentUris;
@@ -30,20 +29,19 @@ public class FileUtilsMine {
     private static Uri contentUri = null;
     private Context context;
 
-    public FileUtilsMine( Context context) {
-        this.context=context;
+    public FileUtilsMine(Context context) {
+        this.context = context;
     }
 
     @SuppressLint("NewApi")
-    public  String getPath(final Uri uri) {
+    public String getPath(final Uri uri) {
         // check here to KITKAT or new version
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
         String selection = null;
         String[] selectionArgs = null;
         // DocumentProvider
-        if (isKitKat ) {
+        if (isKitKat) {
             // ExternalStorageProvider
-
             if (isExternalStorageDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
                 final String[] split = docId.split(":");
@@ -57,9 +55,7 @@ public class FileUtilsMine {
                 }
             }
 
-
             // DownloadsProvider
-
             if (isDownloadsDocument(uri)) {
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -74,8 +70,7 @@ public class FileUtilsMine {
                                 return path;
                             }
                         }
-                    }
-                    finally {
+                    } finally {
                         if (cursor != null)
                             cursor.close();
                     }
@@ -99,11 +94,8 @@ public class FileUtilsMine {
                                 return uri.getPath().replaceFirst("^/document/raw:", "").replaceFirst("^raw:", "");
                             }
                         }
-
-
                     }
-                }
-                else {
+                } else {
                     final String id = DocumentsContract.getDocumentId(uri);
 
                     if (id.startsWith("raw:")) {
@@ -112,8 +104,7 @@ public class FileUtilsMine {
                     try {
                         contentUri = ContentUris.withAppendedId(
                                 Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-                    }
-                    catch (NumberFormatException e) {
+                    } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
                     if (contentUri != null) {
@@ -122,7 +113,6 @@ public class FileUtilsMine {
                     }
                 }
             }
-
 
             // MediaProvider
             if (isMediaDocument(uri)) {
@@ -142,7 +132,6 @@ public class FileUtilsMine {
                 selection = "_id=?";
                 selectionArgs = new String[]{split[1]};
 
-
                 return getDataColumn(context, contentUri, selection,
                         selectionArgs);
             }
@@ -151,10 +140,9 @@ public class FileUtilsMine {
                 return getDriveFilePath(uri);
             }
 
-            if(isWhatsAppFile(uri)){
+            if (isWhatsAppFile(uri)) {
                 return getFilePathForWhatsApp(uri);
             }
-
 
             if ("content".equalsIgnoreCase(uri.getScheme())) {
 
@@ -164,15 +152,9 @@ public class FileUtilsMine {
                 if (isGoogleDriveUri(uri)) {
                     return getDriveFilePath(uri);
                 }
-                if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-                {
-
-                    // return getFilePathFromURI(context,uri);
-                    return copyFileToInternalStorage(uri,"userfiles");
-                    // return getRealPathFromURI(context,uri);
-                }
-                else
-                {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    return copyFileToInternalStorage(uri, "userfiles");
+                } else {
                     return getDataColumn(context, uri, null, null);
                 }
 
@@ -180,10 +162,9 @@ public class FileUtilsMine {
             if ("file".equalsIgnoreCase(uri.getScheme())) {
                 return uri.getPath();
             }
-        }
-        else {
+        } else {
 
-            if(isWhatsAppFile(uri)){
+            if (isWhatsAppFile(uri)) {
                 return getFilePathForWhatsApp(uri);
             }
 
@@ -205,13 +186,10 @@ public class FileUtilsMine {
             }
         }
 
-
-
-
         return null;
     }
 
-    private  boolean fileExists(String filePath) {
+    private boolean fileExists(String filePath) {
         File file = new File(filePath);
 
         return file.exists();
@@ -297,11 +275,11 @@ public class FileUtilsMine {
      * @param newDirName if you want to create a directory, you can set this variable
      * @return
      */
-    private String copyFileToInternalStorage(Uri uri,String newDirName) {
+    private String copyFileToInternalStorage(Uri uri, String newDirName) {
         Uri returnUri = uri;
 
         Cursor returnCursor = context.getContentResolver().query(returnUri, new String[]{
-                OpenableColumns.DISPLAY_NAME,OpenableColumns.SIZE
+                OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE
         }, null, null, null);
 
 
@@ -317,14 +295,13 @@ public class FileUtilsMine {
         String size = (Long.toString(returnCursor.getLong(sizeIndex)));
 
         File output;
-        if(!newDirName.equals("")) {
+        if (!newDirName.equals("")) {
             File dir = new File(context.getFilesDir() + "/" + newDirName);
             if (!dir.exists()) {
                 dir.mkdir();
             }
             output = new File(context.getFilesDir() + "/" + newDirName + "/" + name);
-        }
-        else{
+        } else {
             output = new File(context.getFilesDir() + "/" + name);
         }
         try {
@@ -340,8 +317,7 @@ public class FileUtilsMine {
             inputStream.close();
             outputStream.close();
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
 
             Log.e("Exception", e.getMessage());
         }
@@ -349,8 +325,8 @@ public class FileUtilsMine {
         return output.getPath();
     }
 
-    private String getFilePathForWhatsApp(Uri uri){
-        return  copyFileToInternalStorage(uri,"whatsapp");
+    private String getFilePathForWhatsApp(Uri uri) {
+        return copyFileToInternalStorage(uri, "whatsapp");
     }
 
     private String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
@@ -366,8 +342,7 @@ public class FileUtilsMine {
                 final int index = cursor.getColumnIndexOrThrow(column);
                 return cursor.getString(index);
             }
-        }
-        finally {
+        } finally {
             if (cursor != null)
                 cursor.close();
         }
@@ -375,29 +350,28 @@ public class FileUtilsMine {
         return null;
     }
 
-    private  boolean isExternalStorageDocument(Uri uri) {
+    private boolean isExternalStorageDocument(Uri uri) {
         return "com.android.externalstorage.documents".equals(uri.getAuthority());
     }
 
-    private  boolean isDownloadsDocument(Uri uri) {
+    private boolean isDownloadsDocument(Uri uri) {
         return "com.android.providers.downloads.documents".equals(uri.getAuthority());
     }
 
-    private  boolean isMediaDocument(Uri uri) {
+    private boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 
-    private  boolean isGooglePhotosUri(Uri uri) {
+    private boolean isGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
-    public boolean isWhatsAppFile(Uri uri){
+    public boolean isWhatsAppFile(Uri uri) {
         return "com.whatsapp.provider.media".equals(uri.getAuthority());
     }
 
-    private  boolean isGoogleDriveUri(Uri uri) {
+    private boolean isGoogleDriveUri(Uri uri) {
         return "com.google.android.apps.docs.storage".equals(uri.getAuthority()) || "com.google.android.apps.docs.storage.legacy".equals(uri.getAuthority());
     }
-
 
 }

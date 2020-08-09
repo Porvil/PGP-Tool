@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class KeySerializable implements Serializable {
 
-    private static final long serialVersionUID = 40L;
+    private static final long serialVersionUID = Constants.SERIALVERSIONUID_KEYSERIALIZABLE;
     private String keyName;
     private String keyType;
     private PrivateKeySerializable privateKeySerializable;
@@ -33,13 +33,18 @@ public class KeySerializable implements Serializable {
         return Objects.hash(keyName, keyType, privateKeySerializable, publicKeySerializable);
     }
 
-    public KeySerializable(String keyName, String keyType, PublicKeySerializable publicKeySerializable) {
+    public KeySerializable(String keyName,
+                           String keyType,
+                           PublicKeySerializable publicKeySerializable) {
         this.keyName = keyName;
         this.keyType = keyType;
         this.publicKeySerializable = publicKeySerializable;
     }
 
-    public KeySerializable(String keyName, String keyType, PrivateKeySerializable privateKeySerializable, PublicKeySerializable publicKeySerializable) {
+    public KeySerializable(String keyName,
+                           String keyType,
+                           PrivateKeySerializable privateKeySerializable,
+                           PublicKeySerializable publicKeySerializable) {
         this.keyName = keyName;
         this.keyType = keyType;
         this.privateKeySerializable = privateKeySerializable;

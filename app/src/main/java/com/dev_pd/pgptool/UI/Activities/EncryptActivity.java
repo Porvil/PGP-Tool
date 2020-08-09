@@ -58,6 +58,7 @@ public class EncryptActivity extends AppCompatActivity {
 
     private boolean isErrorInEncryption = false;
     private String error = "";
+    private String encryptedFileName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,11 +86,22 @@ public class EncryptActivity extends AppCompatActivity {
         final Runnable success = new Runnable() {
             @Override
             public void run() {
-                Snackbar.make(view, "File Encrypted Successfully.", Snackbar.LENGTH_SHORT).show();
+                String fileLoc = HelperFunctions.getExternalStoragePath() +
+                        Constants.ENC_DIRECTORY +
+                        Constants.SEPARATOR +
+                        encryptedFileName;
+                Snackbar.make(view, "File Encrypted at \"" + fileLoc + "\"", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("OK", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                            }
+                        }).show();
                 show.cancel();
 
                 isErrorInEncryption = false;
                 error = "";
+                encryptedFileName = "";
             }
         };
 
@@ -101,11 +113,19 @@ public class EncryptActivity extends AppCompatActivity {
                     snack = error;
                 }
 
-                Snackbar.make(view, snack, Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(view, snack, Snackbar.LENGTH_INDEFINITE)
+                        .setAction("OK", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                            }
+                        })
+                        .show();
                 show.cancel();
 
                 isErrorInEncryption = false;
                 error = "";
+                encryptedFileName = "";
             }
         };
 
@@ -214,6 +234,7 @@ public class EncryptActivity extends AppCompatActivity {
                             if(!encrypt.isError()){
                                 boolean b = HelperFunctions.writeEncryptedData(encFileName, Constants.EXTENSION_DATA, encrypt.getEncryptedPGPObject());
                                 if (b) {
+                                    encryptedFileName = encFileName + Constants.EXTENSION_DATA;
                                     runOnUiThread(success);
                                 }
                                 else {
@@ -232,7 +253,7 @@ public class EncryptActivity extends AppCompatActivity {
                     executorService.execute(runnable);
                 }
                 else{
-                    Snackbar.make(view, "Please Select Keys", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view, "Please Select Keys", Snackbar.LENGTH_LONG).show();
                 }
 
             }
@@ -267,7 +288,7 @@ public class EncryptActivity extends AppCompatActivity {
                 }
                 else{
                     View view = findViewById(R.id.linear_encMyKeyContainer);
-                    Snackbar.make(view, "No Key Selected", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view, "No Key Selected", Snackbar.LENGTH_LONG).show();
                 }
             }
         });
@@ -301,7 +322,7 @@ public class EncryptActivity extends AppCompatActivity {
                 }
                 else{
                     View view = findViewById(R.id.linear_encOthersKeyContainer);
-                    Snackbar.make(view, "No Other's Key Selected", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view, "No Other's Key Selected", Snackbar.LENGTH_LONG).show();
                 }
             }
         });
@@ -398,14 +419,12 @@ public class EncryptActivity extends AppCompatActivity {
                                     }
                                 };
 
-
                                 executorService.execute(new Runnable() {
                                     @Override
                                     public void run() {
                                         PrivateKey privateKey = keySerializable.getPrivateKeySerializable().getPrivateKey(pswd);
-//
+
                                         if(privateKey == null){
-                                            //error here
                                             runOnUiThread(wrongpswd);
                                             return;
                                         }
@@ -524,7 +543,6 @@ public class EncryptActivity extends AppCompatActivity {
                                         PrivateKey privateKey = keySerializable.getPrivateKeySerializable().getPrivateKey(pswd);
 
                                         if(privateKey == null){
-                                            //error here
                                             runOnUiThread(wrongpswd);
                                             return;
                                         }

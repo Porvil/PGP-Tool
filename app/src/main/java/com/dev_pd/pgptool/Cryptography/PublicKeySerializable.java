@@ -1,12 +1,14 @@
 package com.dev_pd.pgptool.Cryptography;
 
+import com.dev_pd.pgptool.Others.Constants;
+
 import java.io.Serializable;
 import java.security.PublicKey;
 import java.util.Objects;
 
 public class PublicKeySerializable implements Serializable {
 
-    private static final long serialVersionUID = 41L;
+    private static final long serialVersionUID = Constants.SERIALVERSIONUID_PUBLICKEYSERIALIZABLE;
     private String owner;
     private int keySize;
     private PublicKey publicKey;

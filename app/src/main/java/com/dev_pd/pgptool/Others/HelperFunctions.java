@@ -21,16 +21,16 @@ public class HelperFunctions {
     }
 
     public static boolean isValidKeyFile(String name){
-        if(name.lastIndexOf(".") != -1 && name.lastIndexOf(".") != 0)
-            if (name.substring(name.lastIndexOf(".")).equals(Constants.EXTENSION_KEY))
-                return true;
-
-        return false;
+        return isValidFileWithExtension(name, Constants.EXTENSION_KEY);
     }
 
     public static boolean isValidPGPDataFile(String name){
+        return isValidFileWithExtension(name, Constants.EXTENSION_DATA);
+    }
+
+    private static boolean isValidFileWithExtension(String name, String extension){
         if(name.lastIndexOf(".") != -1 && name.lastIndexOf(".") != 0)
-            if (name.substring(name.lastIndexOf(".")).equals(Constants.EXTENSION_DATA))
+            if (name.substring(name.lastIndexOf(".")).equals(extension))
                 return true;
 
         return false;
@@ -86,7 +86,6 @@ public class HelperFunctions {
     }
 
     public static Boolean writeTempKeyForSharing(String path, Object object){
-
         //Checking the availability state of the External Storage.
         if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             System.out.println("Storage is not mounted, returning!!");
@@ -137,14 +136,11 @@ public class HelperFunctions {
             System.out.println("Object has been deserialized ");
         }
 
-        catch(IOException ex)
-        {
+        catch(IOException ex){
             System.out.println("IOException is caught");
             System.out.println(ex.getMessage());
         }
-
-        catch(ClassNotFoundException ex)
-        {
+        catch(ClassNotFoundException ex){
             System.out.println("ClassNotFoundException is caught");
         }
 

@@ -162,13 +162,13 @@ public class OthersKeyAdapter extends RecyclerView.Adapter<OthersKeyAdapter.MyVi
                                     keysPath.remove(position);
                                     notifyItemRemoved(position);
                                     notifyItemRangeChanged(position, keySerializables.size());
-                                    Snackbar.make(parentView, "Key successfully Deleted.", Snackbar.LENGTH_SHORT).show();
+                                    Snackbar.make(parentView, "Key successfully Deleted.", Snackbar.LENGTH_LONG).show();
                                     dialog.dismiss();
                                 } else {
-                                    Snackbar.make(parentView, "Failed to delete Key.", Snackbar.LENGTH_SHORT).show();
+                                    Snackbar.make(parentView, "Failed to delete Key.", Snackbar.LENGTH_LONG).show();
                                 }
                             } else {
-                                Snackbar.make(parentView, "Key doesn't exist", Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(parentView, "Key doesn't exist", Snackbar.LENGTH_LONG).show();
                             }
                         }
                     });

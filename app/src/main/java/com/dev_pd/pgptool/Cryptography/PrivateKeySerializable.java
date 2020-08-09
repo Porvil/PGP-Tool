@@ -1,15 +1,15 @@
 package com.dev_pd.pgptool.Cryptography;
 
+import com.dev_pd.pgptool.Others.Constants;
+
 import java.io.Serializable;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.Objects;
 
 public class PrivateKeySerializable implements Serializable {
 
-    private static final long serialVersionUID = 42L;
+    private static final long serialVersionUID = Constants.SERIALVERSIONUID_PRIVATEKEYSERIALIZABLE;
     private String owner;
     private int keySize;
     private PrivateKey privateKey;
@@ -57,20 +57,14 @@ public class PrivateKeySerializable implements Serializable {
     }
 
     public PrivateKey getPrivateKey(String password) {
-        try {
-            if(checkIsValidUser(password))
-                return privateKey;
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        }
+        if(checkIsValidUser(password))
+            return privateKey;
 
-        System.out.println("Exception or wrong pswd");
+        System.out.println("Exception or wrong Password");
         return null;
     }
 
-    private boolean checkIsValidUser(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    private boolean checkIsValidUser(String password) {
         if(salt == null){
             System.out.println("SALT IS NULL");
             return false;
