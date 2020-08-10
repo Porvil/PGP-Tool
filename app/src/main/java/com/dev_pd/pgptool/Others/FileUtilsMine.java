@@ -191,7 +191,6 @@ public class FileUtilsMine {
 
     private boolean fileExists(String filePath) {
         File file = new File(filePath);
-
         return file.exists();
     }
 
