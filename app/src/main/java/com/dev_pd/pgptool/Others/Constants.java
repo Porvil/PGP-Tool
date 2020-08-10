@@ -36,7 +36,7 @@ public class Constants {
     
     public static final int PASSWORD_LENGTH = 4;
     
-    public static final int SPLASH_TIME = 500;
+    public static final int SPLASH_TIME = 1500;
 
     public static final float MIN_X = 0.98f;
     public static final float MAX_X = 1f;
