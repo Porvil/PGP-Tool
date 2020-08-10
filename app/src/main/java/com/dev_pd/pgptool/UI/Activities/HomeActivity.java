@@ -40,7 +40,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         view = findViewById(R.id.main);
-        //checkPermissions() should be called only after assigning root View;
+        //checkPermissions() should be called only after assigning root View
         checkPermissions();
 
         btn_encrypt = findViewById(R.id.btn_encrypt);
@@ -155,7 +155,7 @@ public class HomeActivity extends AppCompatActivity {
                 Snackbar.make(view, "Permissions Granted.",
                         Snackbar.LENGTH_SHORT).show();
             } else {
-                final Snackbar snackbar = Snackbar.make(view, "App may not work properly.",
+                final Snackbar snackbar = Snackbar.make(view, "App won't work without Read/Write Permissions.",
                         Snackbar.LENGTH_INDEFINITE);
                 snackbar.setAction("Give Permissions", new View.OnClickListener() {
                     @Override
