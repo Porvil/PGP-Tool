@@ -76,6 +76,8 @@ You can also change the password of your keys by again going to "View Keys" page
 - Encrypted Files Directory - **"internal storage/PGP Tool/Encrypted/"**
 - Decrypted Files Directory - **"internal storage/PGP Tool/Decrypted/"**
 
+### This project is tested on the latest android devices with great accuracy
+
 ### Mentions: 
 - [S.A.Parkhid](https://stackoverflow.com/users/568822/s-a-parkhid) for his/her answer on https://stackoverflow.com/questions/13209494/how-to-get-the-full-file-path-from-uri/60642994#answer-60642994 
 - "FilesUtilsMine.java" is taken from the above link.
@@ -104,6 +106,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-----
-
-# This project is tested on the latest android devices with great accuracy
